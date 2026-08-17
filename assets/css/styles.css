@@ -1261,6 +1261,60 @@ s { text-decoration-thickness: 1px; }
   letter-spacing: 0.08em; color: var(--ink-mute); margin: 0;
 }
 
+/* ── Email gate ── */
+.auth {
+  width: min(430px, calc(100vw - 2rem));
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 24px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.6);
+}
+.auth::backdrop {
+  background: color-mix(in oklab, #05050A 72%, transparent);
+  backdrop-filter: blur(6px);
+}
+.auth[open] { animation: authIn 460ms var(--ease-expo); }
+@keyframes authIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+.auth__panel { display: grid; gap: 0.9rem; padding: clamp(1.5rem, 4vw, 2rem); }
+.auth__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 4vw, 2.3rem);
+  font-weight: 400; line-height: 1;
+  letter-spacing: 0.01em; text-transform: uppercase;
+  margin: 0;
+}
+.auth__body { color: var(--ink-soft); font-size: 0.92rem; margin: 0; }
+.auth__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.35rem; }
+.auth__actions .btn { flex: 1 1 auto; }
+
+/* ── Signed-in chip ── */
+.account {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--hairline);
+  border-radius: 100px;
+  background: none; cursor: pointer;
+  font-family: var(--font-mono); font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  max-width: 210px;
+  transition: border-color var(--dur-fast) var(--ease-soft), color var(--dur-fast) var(--ease-soft);
+}
+.account:hover { border-color: var(--accent); color: var(--ink); }
+.account[hidden] { display: none; }
+.account__dot {
+  width: 7px; height: 7px; border-radius: 50%; flex: none;
+  background: var(--accent);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--accent) 70%, transparent);
+}
+.account__email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 /* Toast */
 .toast {
   position: fixed; left: 50%; bottom: 1.5rem; z-index: 150;
@@ -1394,6 +1448,8 @@ s { text-decoration-thickness: 1px; }
 @media (max-width: 860px) {
   .nav__links { display: none; }
   .bag__label { display: none; }
+  .account__email { display: none; }
+  .account { padding-inline: 0.7rem; }
   .nav__actions .lamp__text { display: none; }
   .nav__inner { gap: 0.6rem; }
   .nav__actions { gap: 0.3rem; }

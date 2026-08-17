@@ -49,6 +49,10 @@
         <span class="lamp__track"><span class="lamp__knob"></span></span>
         <span class="lamp__text" data-lamp-text>Lights off</span>
       </button>
+      <button class="account" data-account type="button" hidden aria-label="Account">
+        <span class="account__dot" aria-hidden="true"></span>
+        <span class="account__email" data-account-email></span>
+      </button>
       <a class="bag" href="#checkout" data-magnetic aria-label="Open your bag">
         <svg class="bag__icon" viewBox="0 0 20 20" aria-hidden="true">
           <path d="M4.5 6.5h11l-1 10.5h-9zM7.2 6.5V4.8a2.8 2.8 0 0 1 5.6 0v1.7"/>
@@ -449,9 +453,12 @@
               </div>
             </fieldset>
 
-            <button class="btn btn--solid btn--lg btn--wide" type="submit" data-place-order>Place order</button>
-            <p class="order-form__note">
-              This is a demonstration storefront — no payment is taken and no card details are ever collected.
+            <button class="btn btn--solid btn--lg btn--wide" type="submit" data-place-order>
+              <span data-order-label>Place order</span>
+            </button>
+            <p class="order-form__note" data-pay-note>
+              Demonstration mode — no payment is taken and no card details are collected here.
+              Point <code>PAYMENTS.endpoint</code> at your deployed Stripe function to take real orders.
             </p>
           </form>
 
@@ -553,6 +560,30 @@
     <span class="foot__meta">NC·01 Glow Edition — demonstration site</span>
   </div>
 </footer>
+
+<!-- Email gate: pressing "Add to bag" asks who you are before starting a bag. -->
+<dialog class="auth" data-auth aria-labelledby="auth-title">
+  <form class="auth__panel" data-auth-form novalidate>
+    <p class="label"><span class="num">01</span> Your email</p>
+    <h2 class="auth__title" id="auth-title">Start your bag</h2>
+    <p class="auth__body">
+      Your bag, your build and your order confirmation all hang off this address.
+      No password to remember, and nothing else sent to you unless you ask.
+    </p>
+
+    <div class="field field--wide">
+      <label for="auth-email">Email</label>
+      <input id="auth-email" name="email" type="email" autocomplete="email"
+             required placeholder="you@example.com" data-auth-input>
+      <span class="field__err" data-err-for="auth-email"></span>
+    </div>
+
+    <div class="auth__actions">
+      <button class="btn btn--solid" type="submit">Continue</button>
+      <button class="btn" type="button" data-auth-cancel>Not now</button>
+    </div>
+  </form>
+</dialog>
 
 <div class="toast" data-toast role="status" aria-live="polite"></div>
 

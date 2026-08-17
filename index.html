@@ -3,33 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quicksand QS·01 — Glow-in-the-Dark AirPods Cases</title>
-<meta name="description" content="Ten minutes of light. Six hours of dark. A sealed liquid-suspension AirPods case with a photoluminescent core. Three colourways, four fits, from $15.99.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2308080A'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%234FE8FF'/%3E%3C/svg%3E">
+<title>NovaCase NC·01 — Glow-in-the-Dark AirPods Cases</title>
+<meta name="description" content="Glows all night. Guards all day. A sealed quicksand shell with a photoluminescent core — anti-dust, scratch-resistant, anti-fall. Three colourways, four fits, from $15.99.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='7' fill='%2308080A'/%3E%3Cpath d='M12 3 L13.6 9.6 L20.2 12 L13.6 14.4 L12 21 L10.4 14.4 L3.8 12 L10.4 9.6 Z' fill='%234FE8FF'/%3E%3C/svg%3E">
 <script>
-  /* Set the theme before first paint so the page never flashes the wrong one. */
+  /* Resolve theme and configuration before first paint so nothing flashes. */
   (function () {
+    var r = document.documentElement;
     try {
-      var saved = localStorage.getItem('qs-theme');
-      var dark = saved ? saved === 'dark'
-                       : !window.matchMedia('(prefers-color-scheme: light)').matches;
-      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      var saved = localStorage.getItem('nc-theme');
+      r.dataset.theme = saved ? saved
+        : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
     } catch (e) {}
   })();
 </script>
+<link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
 
 <a class="skip-link" href="#main">Skip to content</a>
 <div class="grain" aria-hidden="true"></div>
+<div class="sweep" aria-hidden="true"></div>
 
 <header class="nav" id="nav">
   <div class="nav__rail" aria-hidden="true"><span class="nav__rail-fill"></span></div>
   <div class="nav__inner">
-    <a class="nav__brand" href="#top">
-      <span class="nav__mark">Quicksand</span>
-      <span class="chip chip--ghost">QS·01</span>
+    <a class="nav__brand" href="#top" aria-label="NovaCase home">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2 L13.8 9.4 L21.2 12 L13.8 14.6 L12 22 L10.2 14.6 L2.8 12 L10.2 9.4 Z"/>
+      </svg>
+      <span class="nav__mark">NovaCase</span>
+      <span class="chip chip--ghost">NC·01</span>
     </a>
 
     <nav class="nav__links" aria-label="Sections">
@@ -44,9 +49,12 @@
         <span class="lamp__track"><span class="lamp__knob"></span></span>
         <span class="lamp__text" data-lamp-text>Lights off</span>
       </button>
-      <a class="pill" href="#fit" data-magnetic>
-        <span class="pill__summary"><span data-summary-colour>Forest Green</span> · <span data-summary-fit>AirPods 1 &amp; 2</span></span>
-        <span class="pill__price" data-price-mini>$15.99</span>
+      <a class="bag" href="#checkout" data-magnetic aria-label="Open your bag">
+        <svg class="bag__icon" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M4.5 6.5h11l-1 10.5h-9zM7.2 6.5V4.8a2.8 2.8 0 0 1 5.6 0v1.7"/>
+        </svg>
+        <span class="bag__label">Bag</span>
+        <span class="bag__count" data-bag-count>0</span>
       </a>
     </div>
   </div>
@@ -54,31 +62,32 @@
 
 <main id="main">
 
-  <!-- ══════════════  HERO — one device: stacked type interlocked with the shot  ══════════════ -->
+  <!-- ══════════  HERO — one device: type interlocked with the shot  ══════════ -->
   <section class="hero" id="top" data-section>
     <div class="hero__sticky">
 
-      <p class="hero__eyebrow chip">Quicksand Series — Glow Edition</p>
+      <p class="hero__eyebrow chip">NovaCase — Quicksand Glow Edition</p>
 
       <div class="hero__stack" data-stack>
         <h1 class="hero__title">
-          <span class="hero__line hero__line--back"><i>Ten minutes</i></span>
-          <span class="hero__line hero__line--back"><i>of light.</i></span>
-          <span class="hero__line hero__line--front"><i>Six hours</i></span>
-          <span class="hero__line hero__line--front"><i>of dark.</i></span>
+          <span class="hero__line hero__line--back"><i>Glows all</i></span>
+          <span class="hero__line hero__line--back"><i>night.</i></span>
+          <span class="hero__line hero__line--front"><i>Guards all</i></span>
+          <span class="hero__line hero__line--front"><i>day.</i></span>
         </h1>
 
-        <figure class="shot hero__shot" data-shot>
+        <figure class="shot hero__shot" data-shot data-hero-shot>
           <span class="hero__bloom" aria-hidden="true"></span>
-          <img src="assets/images/forest-green.jpg" alt="A Quicksand glow case held in one hand, its liquid core catching the light." width="676" height="596">
+          <img src="assets/images/forest-green.jpg" alt="A NovaCase glow case held in one hand, its liquid core catching the light." width="676" height="596">
           <figcaption class="shot__pending">Photograph pending</figcaption>
         </figure>
       </div>
 
       <div class="hero__foot">
         <p class="hero__lede">
-          A sealed liquid suspension over a photoluminescent core.
-          It drinks whatever light is in the room and gives it back all night.
+          A sealed quicksand shell over a photoluminescent core. Ten minutes of light
+          buys six hours of glow — and anti-dust, anti-scratch, anti-fall protection
+          that never clocks off.
         </p>
         <div class="hero__cta">
           <a class="btn btn--solid" href="#fit" data-magnetic>Configure yours</a>
@@ -90,7 +99,7 @@
     </div>
   </section>
 
-  <!-- ══════════════  01 · GLOW — one moment: the switch  ══════════════ -->
+  <!-- ══════════  01 · GLOW — one moment: the switch  ══════════ -->
   <section class="section lights" id="lights" data-section>
     <div class="wrap">
       <header class="section__head">
@@ -129,7 +138,7 @@
     </div>
   </section>
 
-  <!-- ══════════════  02 · COLOURWAYS — one moment: the crossfade  ══════════════ -->
+  <!-- ══════════  02 · COLOURWAYS — one moment: the crossfade  ══════════ -->
   <section class="section colourways" id="colourways" data-section>
     <div class="wrap">
       <header class="section__head">
@@ -180,15 +189,15 @@
     </div>
   </section>
 
-  <!-- ══════════════  03 · FIT — one moment: the price roll  ══════════════ -->
+  <!-- ══════════  03 · FIT — one moment: the price roll  ══════════ -->
   <section class="section fit" id="fit" data-section>
     <div class="wrap">
       <header class="section__head">
         <p class="label"><span class="num">03</span> Fit</p>
         <h2 class="h2" data-split>Four shells. Tooled separately.</h2>
         <p class="section__lede">
-          Hinge relief, LED window and port cutout are cut for one model alone — the shells are not
-          interchangeable. Every price is the launch price, ten dollars under list.
+          Hinge relief, LED window and port cutout are cut for one model alone — the shells are
+          not interchangeable. Every price is the launch price, ten dollars under list.
         </p>
       </header>
 
@@ -234,10 +243,16 @@
         </button>
       </div>
 
-      <!-- Borrowed from 21C: the bag arrives pre-filled with what you were just reading. -->
+      <p class="fit__finder">
+        <span class="chip">Not sure?</span>
+        The model number is printed in small type on the underside of your charging case —
+        <b>A1602 / A2032</b> is AirPods 1 &amp; 2, <b>A2190 / A2700</b> is Pro, <b>A2566</b> is AirPods 3,
+        <b>A3057</b> is AirPods 4.
+      </p>
+
       <div class="ticket">
         <div class="ticket__col">
-          <p class="label">Pre-filled from your build</p>
+          <p class="label">Your build</p>
           <p class="ticket__build">
             <span data-summary-colour>Forest Green</span>
             <span class="ticket__sep" aria-hidden="true">/</span>
@@ -253,39 +268,64 @@
         </div>
 
         <div class="ticket__col">
-          <a class="btn btn--solid btn--wide" href="#faq" data-magnetic>Add to bag</a>
+          <button class="btn btn--solid btn--wide" type="button" data-add-to-bag data-magnetic>
+            <span data-add-label>Add to bag</span>
+          </button>
           <p class="ticket__note">Free shipping over $25 · 30-day returns</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════  04 · SPECIFICATION — one moment: the numbered cascade  ══════════════ -->
+  <!-- ══════════  04 · SPECIFICATION — one moment: the cascade  ══════════ -->
   <section class="section specs" id="specifications" data-section>
     <div class="wrap">
       <header class="section__head">
         <p class="label"><span class="num">04</span> Specification</p>
         <h2 class="h2" data-split>Every number, on the record.</h2>
-        <p class="section__lede">The abstract part is over. This is the whole sheet.</p>
       </header>
+
+      <ul class="features">
+        <li class="feature">
+          <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8"/><path d="M8.5 12h7M12 8.5v7"/>
+          </svg>
+          <b>Anti-dust</b><span>Sealed seams keep lint out of the hinge and the port cutout.</span>
+        </li>
+        <li class="feature">
+          <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/>
+          </svg>
+          <b>Scratch-resistant</b><span>Hard-coated outer wall shrugs off keys and coins.</span>
+        </li>
+        <li class="feature">
+          <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4v10m0 0l-3.5-3.5M12 14l3.5-3.5"/><path d="M5 18h14"/>
+          </svg>
+          <b>Anti-fall</b><span>Shock-absorbing inner layer, rated to 1.5 m on six faces.</span>
+        </li>
+        <li class="feature">
+          <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 13a6 6 0 0 1 12 0"/><rect x="4" y="13" width="4" height="6" rx="2"/><rect x="16" y="13" width="4" height="6" rx="2"/>
+          </svg>
+          <b>Earphone protection cover</b><span>Full wrap over the lid — the buds stay covered when it's open.</span>
+        </li>
+      </ul>
 
       <div class="specs__grid">
         <dl class="spec-list">
           <div class="spec-row"><dt>Shell</dt><dd>Dual-layer polycarbonate, 1.8 mm wall</dd></div>
-          <div class="spec-row"><dt>Core</dt><dd>Sealed quicksand suspension, non-toxic glycerol base</dd></div>
-          <div class="spec-row"><dt>Glow compound</dt><dd>Strontium aluminate — SrAl₂O₄:Eu,Dy</dd></div>
+          <div class="spec-row"><dt>Glow</dt><dd>Strontium aluminate — cyan-green, 505 nm peak</dd></div>
           <div class="spec-row"><dt>Charge time</dt><dd>10 minutes under direct light</dd></div>
           <div class="spec-row"><dt>Glow duration</dt><dd>Up to 6 hours, tapering</dd></div>
-          <div class="spec-row"><dt>Emission</dt><dd>Cyan-green, 505 nm peak</dd></div>
+          <div class="spec-row"><dt>Protection</dt><dd>Anti-dust · scratch-resistant · anti-fall</dd></div>
+          <div class="spec-row"><dt>Drop rating</dt><dd>1.5 m, tested on six faces</dd></div>
           <div class="spec-row"><dt>Wireless charging</dt><dd>Qi pass-through, case on</dd></div>
           <div class="spec-row"><dt>LED window</dt><dd>Front cutout, unobstructed</dd></div>
-          <div class="spec-row"><dt>Hinge</dt><dd>Full rear relief — no lid strain</dd></div>
-          <div class="spec-row"><dt>Drop rating</dt><dd>1.5 m, tested on six faces</dd></div>
           <div class="spec-row is-live"><dt>Fits</dt><dd data-spec-fit>AirPods 1 &amp; 2</dd></div>
           <div class="spec-row is-live"><dt>Dimensions</dt><dd data-spec-dims>53 × 46 × 25 mm</dd></div>
           <div class="spec-row is-live"><dt>Weight</dt><dd data-spec-weight>28 g</dd></div>
           <div class="spec-row"><dt>In the box</dt><dd>Case, stainless carabiner, ball chain</dd></div>
-          <div class="spec-row"><dt>Care</dt><dd>Wipe with a damp cloth. Do not submerge.</dd></div>
         </dl>
 
         <aside class="specs__media">
@@ -306,7 +346,7 @@
     </div>
   </section>
 
-  <!-- ══════════════  05 · MECHANICS — one moment: the counters  ══════════════ -->
+  <!-- ══════════  05 · MECHANICS — one moment: the counters  ══════════ -->
   <section class="section mech" id="mechanics" data-section>
     <div class="mech__layers" aria-hidden="true">
       <span class="mech__layer mech__layer--a"></span>
@@ -342,27 +382,109 @@
     </div>
   </section>
 
-  <!-- ══════════════  TICKER  ══════════════ -->
+  <!-- ══════════  TICKER  ══════════ -->
   <section class="ticker" aria-hidden="true">
     <div class="ticker__track">
       <span>Photoluminescent core</span><span class="ticker__dot">◦</span>
+      <span>Anti-dust</span><span class="ticker__dot">◦</span>
+      <span>Scratch-resistant</span><span class="ticker__dot">◦</span>
+      <span>Anti-fall</span><span class="ticker__dot">◦</span>
       <span>Qi pass-through</span><span class="ticker__dot">◦</span>
-      <span>Sealed liquid suspension</span><span class="ticker__dot">◦</span>
       <span>Six-hour glow</span><span class="ticker__dot">◦</span>
-      <span>Carabiner included</span><span class="ticker__dot">◦</span>
-      <span>1.5 m drop rated</span><span class="ticker__dot">◦</span>
     </div>
   </section>
 
-  <!-- ══════════════  06 · FAQ-as-sales-page  ══════════════ -->
+  <!-- ══════════  06 · CHECKOUT — the bag actually holds things  ══════════ -->
+  <section class="section checkout" id="checkout" data-section>
+    <div class="wrap">
+      <header class="section__head">
+        <p class="label"><span class="num">06</span> Checkout</p>
+        <h2 class="h2" data-split>Your bag.</h2>
+      </header>
+
+      <div class="checkout__grid">
+        <div class="checkout__main">
+          <p class="bag-empty" data-bag-empty>
+            Nothing in the bag yet. <a href="#fit">Pick a colourway and a fit</a> and it lands here.
+          </p>
+
+          <ul class="bag-list" data-bag-list></ul>
+
+          <form class="order-form" data-order-form novalidate>
+            <fieldset>
+              <legend class="label">Where it ships</legend>
+              <div class="field field--wide">
+                <label for="of-email">Email</label>
+                <input id="of-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+                <span class="field__err" data-err-for="email"></span>
+              </div>
+              <div class="field field--wide">
+                <label for="of-name">Full name</label>
+                <input id="of-name" name="name" type="text" autocomplete="name" required placeholder="Alex Mercer">
+                <span class="field__err" data-err-for="name"></span>
+              </div>
+              <div class="field field--wide">
+                <label for="of-addr">Address</label>
+                <input id="of-addr" name="address" type="text" autocomplete="street-address" required placeholder="12 Lantern Row">
+                <span class="field__err" data-err-for="address"></span>
+              </div>
+              <div class="field">
+                <label for="of-city">City</label>
+                <input id="of-city" name="city" type="text" autocomplete="address-level2" required placeholder="Portland">
+                <span class="field__err" data-err-for="city"></span>
+              </div>
+              <div class="field">
+                <label for="of-zip">Postcode</label>
+                <input id="of-zip" name="zip" type="text" autocomplete="postal-code" required placeholder="97205">
+                <span class="field__err" data-err-for="zip"></span>
+              </div>
+            </fieldset>
+
+            <button class="btn btn--solid btn--lg btn--wide" type="submit" data-place-order>Place order</button>
+            <p class="order-form__note">
+              This is a demonstration storefront — no payment is taken and no card details are ever collected.
+            </p>
+          </form>
+
+          <div class="order-done" data-order-done hidden>
+            <p class="chip chip--save">Order placed</p>
+            <p class="order-done__ref">Reference <b data-order-ref>NC-000000</b></p>
+            <p class="order-done__body">
+              A confirmation is on its way to <b data-order-email>you</b>. Your NovaCase ships within
+              two working days, fully charged and ready to glow.
+            </p>
+            <button class="btn" type="button" data-order-reset>Start another order</button>
+          </div>
+        </div>
+
+        <aside class="summary">
+          <div class="summary__inner">
+            <p class="label">Order summary</p>
+            <dl class="summary__lines">
+              <div><dt>Subtotal</dt><dd data-sum-subtotal>$0.00</dd></div>
+              <div><dt>Shipping</dt><dd data-sum-shipping>—</dd></div>
+              <div class="summary__total"><dt>Total</dt><dd data-sum-total>$0.00</dd></div>
+            </dl>
+            <p class="summary__ship" data-ship-hint>Free shipping over $25.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════  07 · FAQ  ══════════ -->
   <section class="section faq" id="faq" data-section>
     <div class="wrap wrap--narrow">
       <header class="section__head">
-        <p class="label"><span class="num">06</span> Before you buy</p>
+        <p class="label"><span class="num">07</span> Before you buy</p>
         <h2 class="h2" data-split>The five things people ask.</h2>
       </header>
 
       <div class="faq__list">
+        <details class="qa">
+          <summary><span>Which fit do I need?</span><span class="qa__sign" aria-hidden="true"></span></summary>
+          <div class="qa__body"><p>Check the model number on the underside of your charging case and match it in the Fit section above. The four shells are tooled separately and are not interchangeable.</p></div>
+        </details>
         <details class="qa">
           <summary><span>Does it block wireless charging?</span><span class="qa__sign" aria-hidden="true"></span></summary>
           <div class="qa__body"><p>No. The shell is under 2 mm and Qi passes straight through — drop it on the pad with the case on.</p></div>
@@ -379,15 +501,11 @@
           <summary><span>Can the quicksand leak?</span><span class="qa__sign" aria-hidden="true"></span></summary>
           <div class="qa__body"><p>The cavity is ultrasonically welded and pressure-tested before it leaves the line. It is not user-serviceable and should not be opened.</p></div>
         </details>
-        <details class="qa">
-          <summary><span>Which fit do I need?</span><span class="qa__sign" aria-hidden="true"></span></summary>
-          <div class="qa__body"><p>The model number is printed in small type on the underside of your charging case. Match it to one of the four shells above — they are not interchangeable.</p></div>
-        </details>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════  CLOSER  ══════════════ -->
+  <!-- ══════════  CLOSER  ══════════ -->
   <section class="closer" data-section>
     <span class="closer__bloom" aria-hidden="true"></span>
     <div class="wrap">
@@ -405,7 +523,11 @@
         <span class="closer__price" data-price-mini>$15.99</span>
       </div>
 
-      <a class="btn btn--solid btn--lg" href="#fit" data-magnetic>Add to bag</a>
+      <button class="btn btn--solid btn--lg" type="button" data-add-to-bag data-magnetic>
+        <span data-add-label>Add to bag</span>
+      </button>
+
+      <p class="closer__reassure">Free shipping over $25 · 30-day returns · Ships in two working days</p>
     </div>
   </section>
 
@@ -413,14 +535,17 @@
 
 <footer class="foot">
   <div class="wrap foot__inner">
-    <span class="nav__mark">Quicksand</span>
-    <span class="foot__meta">QS·01 Glow Edition — demonstration site</span>
-    <button class="lamp lamp--mini" data-lamp type="button" aria-pressed="true" aria-label="Turn the lights on">
-      <span class="lamp__track"><span class="lamp__knob"></span></span>
-      <span class="lamp__text" data-lamp-text>Lights off</span>
-    </button>
+    <span class="nav__brand">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2 L13.8 9.4 L21.2 12 L13.8 14.6 L12 22 L10.2 14.6 L2.8 12 L10.2 9.4 Z"/>
+      </svg>
+      <span class="nav__mark">NovaCase</span>
+    </span>
+    <span class="foot__meta">NC·01 Glow Edition — demonstration site</span>
   </div>
 </footer>
+
+<div class="toast" data-toast role="status" aria-live="polite"></div>
 
 <script src="assets/js/main.js"></script>
 </body>

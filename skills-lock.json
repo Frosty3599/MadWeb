@@ -323,5 +323,56 @@
       "computedHash": "6d420e5bab0eee61298a39e38531f00ae58b1f6a196495b3aa01f95fb2aa8008",
       "note": "Reference template with placeholder credentials (YOUR_*_HERE); not copied to .mcp.json, so no MCP servers are active yet."
     }
+  },
+  "scripts": {
+    "hooks/evaluate-session.js": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "scripts/hooks/evaluate-session.js",
+      "computedHash": "4f0a0a14dccc932ff60795a3fb7847ebf3c6764049ed162faf3836aafa134686",
+      "note": "Referenced by hooks/hooks.json's SessionEnd hooks; inert until hooks are wired into .claude/settings.json."
+    },
+    "hooks/pre-compact.js": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "scripts/hooks/pre-compact.js",
+      "computedHash": "e20cf3a77c0968d77cbe1ebbebc1dbeea8fb79530ed0d747c85eaf393657796b",
+      "note": "Referenced by hooks/hooks.json's PreCompact hook; inert until hooks are wired into .claude/settings.json."
+    },
+    "hooks/session-end.js": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "scripts/hooks/session-end.js",
+      "computedHash": "2304cbb20a804a2bcecc5472291c1383ec8ca482e8a801beafcd58b38f6233f4",
+      "note": "Referenced by hooks/hooks.json's SessionEnd hooks; inert until hooks are wired into .claude/settings.json."
+    },
+    "hooks/session-start.js": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "scripts/hooks/session-start.js",
+      "computedHash": "65e4800b2e6642f14e6b27885c0660e5307ab72c9c0e788d4c43bf8a54f9cfc7",
+      "note": "Referenced by hooks/hooks.json's SessionStart hook; inert until hooks are wired into .claude/settings.json."
+    },
+    "hooks/suggest-compact.js": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "scripts/hooks/suggest-compact.js",
+      "computedHash": "73294b7a236cc904db1d74014d2047ef579bace556831ebb81c3dc179e1a56f5",
+      "note": "Referenced by hooks/hooks.json's PreToolUse hook; inert until hooks are wired into .claude/settings.json."
+    },
+    "lib/package-manager.js": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "scripts/lib/package-manager.js",
+      "computedHash": "abd0ed2fc8353d65510f906005309b2868589512cbe55d476724f916c01344d9",
+      "note": "Dependency of hooks/session-start.js."
+    },
+    "lib/utils.js": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "scripts/lib/utils.js",
+      "computedHash": "14d7367255ab3b7e49ede01fbf1f4fb12a729d5a4e7dbb41b8c81d33db96a31b",
+      "note": "Dependency shared by all hooks/*.js scripts."
+    }
   }
 }

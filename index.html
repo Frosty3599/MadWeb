@@ -49,6 +49,10 @@
         <span class="lamp__track"><span class="lamp__knob"></span></span>
         <span class="lamp__text" data-lamp-text>Lights off</span>
       </button>
+      <button class="account" data-account type="button" hidden aria-label="Account">
+        <span class="account__dot" aria-hidden="true"></span>
+        <span class="account__email" data-account-email></span>
+      </button>
       <a class="bag" href="#checkout" data-magnetic aria-label="Open your bag">
         <svg class="bag__icon" viewBox="0 0 20 20" aria-hidden="true">
           <path d="M4.5 6.5h11l-1 10.5h-9zM7.2 6.5V4.8a2.8 2.8 0 0 1 5.6 0v1.7"/>
@@ -66,19 +70,27 @@
   <section class="hero" id="top" data-section>
     <div class="hero__sticky">
 
-      <p class="hero__eyebrow chip">NovaCase — Quicksand Glow Edition</p>
+      <p class="hero__eyebrow">
+        <span class="hero__eyebrow-inner">
+          <svg class="mark mark--sm" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2 L13.8 9.4 L21.2 12 L13.8 14.6 L12 22 L10.2 14.6 L2.8 12 L10.2 9.4 Z"/>
+          </svg>
+          NovaCase — Quicksand Glow Edition
+        </span>
+      </p>
 
       <div class="hero__stack" data-stack>
+        <span class="hero__bloom" aria-hidden="true"></span>
         <h1 class="hero__title">
+          <!-- Only the first line passes behind the shot, so every word reads. -->
           <span class="hero__line hero__line--back"><i>Glows all</i></span>
-          <span class="hero__line hero__line--back"><i>night.</i></span>
-          <span class="hero__line hero__line--front"><i>Guards all</i></span>
-          <span class="hero__line hero__line--front"><i>day.</i></span>
+          <span class="hero__line"><i>night.</i></span>
+          <span class="hero__line"><i>Guards all</i></span>
+          <span class="hero__line"><i>day.</i></span>
         </h1>
 
-        <figure class="shot hero__shot" data-shot data-hero-shot>
-          <span class="hero__bloom" aria-hidden="true"></span>
-          <img src="assets/images/forest-green.jpg" alt="A NovaCase glow case held in one hand, its liquid core catching the light." width="676" height="596">
+        <figure class="shot hero__shot" data-shot>
+          <img src="assets/images/forest-green.jpg" alt="A NovaCase glow case held in one hand, its liquid core catching the light." width="676" height="595" fetchpriority="high" decoding="async">
           <figcaption class="shot__pending">Photograph pending</figcaption>
         </figure>
       </div>
@@ -102,32 +114,33 @@
   <!-- ══════════  01 · GLOW — one moment: the switch  ══════════ -->
   <section class="section lights" id="lights" data-section>
     <div class="wrap">
-      <header class="section__head">
-        <p class="label"><span class="num">01</span> The glow</p>
-        <h2 class="h2" data-split>Turn the lights off.</h2>
-        <p class="section__lede">
-          The pigment is strontium aluminate — inorganic, non-radioactive, effectively permanent.
-          Use the switch. The whole page goes with it.
-        </p>
-      </header>
+      <div class="lights__grid">
+        <header class="section__head lights__copy">
+          <p class="label"><span class="num">01</span> The glow</p>
+          <h2 class="h2" data-split>Turn the lights off.</h2>
+          <p class="section__lede">
+            The pigment is strontium aluminate — inorganic, non-radioactive, effectively permanent.
+            Use the switch. The whole page goes with it.
+          </p>
+          <button class="lamp lamp--big" data-lamp type="button" aria-pressed="true" aria-label="Turn the lights on">
+            <span class="lamp__track"><span class="lamp__knob"></span></span>
+            <span class="lamp__text" data-lamp-text>Lights off</span>
+          </button>
+        </header>
 
-      <div class="lights__stage">
-        <span class="lights__glow" aria-hidden="true"></span>
+        <div class="lights__stage">
+          <span class="lights__glow" aria-hidden="true"></span>
 
-        <figure class="shot lights__shot lights__shot--on" data-shot>
-          <img src="assets/images/glow-off.jpg" alt="The case in a lit room — an ordinary deep red finish." width="392" height="352">
-          <figcaption class="shot__pending">Photograph pending</figcaption>
-        </figure>
+          <figure class="shot lights__shot lights__shot--on" data-shot>
+            <img src="assets/images/glow-off.jpg" alt="The case in a lit room — an ordinary deep red finish." width="363" height="382" loading="lazy" decoding="async">
+            <figcaption class="shot__pending">Photograph pending</figcaption>
+          </figure>
 
-        <figure class="shot lights__shot lights__shot--off" data-shot>
-          <img src="assets/images/glow-on.jpg" alt="The same case in darkness, burning cyan from within." width="991" height="962">
-          <figcaption class="shot__pending">Photograph pending</figcaption>
-        </figure>
-
-        <button class="lamp lamp--big" data-lamp type="button" aria-pressed="true" aria-label="Turn the lights on">
-          <span class="lamp__track"><span class="lamp__knob"></span></span>
-          <span class="lamp__text" data-lamp-text>Lights off</span>
-        </button>
+          <figure class="shot lights__shot lights__shot--off" data-shot>
+            <img src="assets/images/glow-on.jpg" alt="The same case in darkness, burning cyan from within." width="988" height="963" loading="lazy" decoding="async">
+            <figcaption class="shot__pending">Photograph pending</figcaption>
+          </figure>
+        </div>
       </div>
 
       <dl class="claims">
@@ -151,15 +164,15 @@
           <span class="colourways__halo" aria-hidden="true"></span>
 
           <figure class="shot cw-shot" data-cw="forest-green" data-shot>
-            <img src="assets/images/forest-green.jpg" alt="Forest Green — a vivid green suspension over a graphite base." width="676" height="596">
+            <img src="assets/images/forest-green.jpg" alt="Forest Green — a vivid green suspension over a graphite base." width="676" height="596" loading="lazy" decoding="async">
             <figcaption class="shot__pending">Photograph pending</figcaption>
           </figure>
           <figure class="shot cw-shot" data-cw="amber-red" data-shot>
-            <img src="assets/images/amber-red.jpg" alt="Amber Red — molten red bleeding into black." width="418" height="378">
+            <img src="assets/images/amber-red.jpg" alt="Amber Red — molten red bleeding into black." width="418" height="378" loading="lazy" decoding="async">
             <figcaption class="shot__pending">Photograph pending</figcaption>
           </figure>
           <figure class="shot cw-shot" data-cw="midnight-blue" data-shot>
-            <img src="assets/images/midnight-blue.jpg" alt="Midnight Blue — deep teal fading to ink." width="418" height="378">
+            <img src="assets/images/midnight-blue.jpg" alt="Midnight Blue — deep teal fading to ink." width="418" height="378" loading="lazy" decoding="async">
             <figcaption class="shot__pending">Photograph pending</figcaption>
           </figure>
         </div>
@@ -383,7 +396,7 @@
   </section>
 
   <!-- ══════════  TICKER  ══════════ -->
-  <section class="ticker" aria-hidden="true">
+  <section class="ticker" aria-hidden="true" data-section>
     <div class="ticker__track">
       <span>Photoluminescent core</span><span class="ticker__dot">◦</span>
       <span>Anti-dust</span><span class="ticker__dot">◦</span>
@@ -440,9 +453,12 @@
               </div>
             </fieldset>
 
-            <button class="btn btn--solid btn--lg btn--wide" type="submit" data-place-order>Place order</button>
-            <p class="order-form__note">
-              This is a demonstration storefront — no payment is taken and no card details are ever collected.
+            <button class="btn btn--solid btn--lg btn--wide" type="submit" data-place-order>
+              <span data-order-label>Place order</span>
+            </button>
+            <p class="order-form__note" data-pay-note>
+              Demonstration mode — no payment is taken and no card details are collected here.
+              Point <code>PAYMENTS.endpoint</code> at your deployed Stripe function to take real orders.
             </p>
           </form>
 
@@ -544,6 +560,30 @@
     <span class="foot__meta">NC·01 Glow Edition — demonstration site</span>
   </div>
 </footer>
+
+<!-- Email gate: pressing "Add to bag" asks who you are before starting a bag. -->
+<dialog class="auth" data-auth aria-labelledby="auth-title">
+  <form class="auth__panel" data-auth-form novalidate>
+    <p class="label"><span class="num">01</span> Your email</p>
+    <h2 class="auth__title" id="auth-title">Start your bag</h2>
+    <p class="auth__body">
+      Your bag, your build and your order confirmation all hang off this address.
+      No password to remember, and nothing else sent to you unless you ask.
+    </p>
+
+    <div class="field field--wide">
+      <label for="auth-email">Email</label>
+      <input id="auth-email" name="email" type="email" autocomplete="email"
+             required placeholder="you@example.com" data-auth-input>
+      <span class="field__err" data-err-for="auth-email"></span>
+    </div>
+
+    <div class="auth__actions">
+      <button class="btn btn--solid" type="submit">Continue</button>
+      <button class="btn" type="button" data-auth-cancel>Not now</button>
+    </div>
+  </form>
+</dialog>
 
 <div class="toast" data-toast role="status" aria-live="polite"></div>
 

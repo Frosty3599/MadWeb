@@ -284,6 +284,14 @@ s { text-decoration-thickness: 1px; }
 .btn.is-done::before { transform: translateY(101%); }
 
 
+/* Anything scrolled well clear of the viewport stops animating. Fourteen
+   infinite animations running at once is battery the visitor never sees. */
+.is-offscreen,
+.is-offscreen *,
+.is-offscreen *::before,
+.is-offscreen *::after { animation-play-state: paused !important; }
+
+
 /* ─────────────────────  5. MOTION PRIMITIVES  ───────────────────── */
 
 [data-reveal] {
@@ -343,7 +351,18 @@ s { text-decoration-thickness: 1px; }
     inset 0 -14px 30px -14px rgba(0,0,0,0.7),
     0 24px 60px -26px color-mix(in oklab, var(--tone-a) 60%, transparent);
 }
-.shot img { position: relative; z-index: 2; width: 100%; border-radius: 14px; transition: opacity var(--dur) var(--ease-soft); }
+/* The photographs arrive at different aspect ratios and framings. A fixed
+   square box with object-fit:cover crops them all the same way, so every
+   product shot on the page sits at one consistent size and shape. */
+.shot img {
+  position: relative; z-index: 2;
+  width: 100%; height: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+  transition: opacity var(--dur) var(--ease-soft);
+}
 
 .shot.is-missing { min-height: clamp(170px, 24vw, 300px); }
 .shot.is-missing img { opacity: 0; position: absolute; }
@@ -504,8 +523,51 @@ s { text-decoration-thickness: 1px; }
   transform-origin: 50% 40%;
 }
 
-.hero__eyebrow { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+/* ── OVERDRIVE: the eyebrow is a charged filament, not a label ──
+   A conic sweep rotates behind a 1px rim, an inner fill masks all but that
+   rim, and the whole pill sits in its own glow. It is the first thing on the
+   page and it should already be doing the thing the product does. */
+.hero__eyebrow {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  padding: 1px;                        /* the rim thickness */
+  border-radius: 100px;
+  overflow: hidden;
+  box-shadow: 0 0 26px -6px color-mix(in oklab, var(--glow) 45%, transparent);
+}
+.hero__eyebrow::before {
+  content: "";
+  position: absolute; inset: -160%; z-index: 0;
+  background: conic-gradient(from 0deg,
+              transparent 0 62%,
+              color-mix(in oklab, var(--accent) 85%, transparent) 78%,
+              var(--glow) 88%,
+              transparent 96% 100%);
+  animation: filament 4.2s linear infinite;
+}
+@keyframes filament { to { transform: rotate(1turn); } }
 
+.hero__eyebrow-inner {
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; gap: 0.6em;
+  padding: 0.5em 1.15em;
+  border-radius: inherit;
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: var(--fs-chip);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  white-space: nowrap;
+  transition: letter-spacing var(--dur) var(--ease-expo),
+              background-color var(--theme-dur) var(--ease-soft);
+}
+.hero__eyebrow:hover .hero__eyebrow-inner { letter-spacing: 0.26em; }
+.mark--sm { width: 13px; height: 13px; }
+
+/* No product shot here any more — the hero is the type. */
 .hero__stack { position: relative; display: grid; place-items: center; width: 100%; }
 
 .hero__title {
@@ -529,8 +591,30 @@ s { text-decoration-thickness: 1px; }
 }
 [data-stack].is-in .hero__line > i { transform: none; }
 
-.hero__line--back  { position: relative; z-index: 1; }
-.hero__line--front { position: relative; z-index: 3; }
+.hero__line          { position: relative; z-index: 3; }
+.hero__line--back    { z-index: 1; }
+
+/* The product shot returns to the hero. It is a photograph with its own
+   background, so it is feathered into the page rather than dropped on top,
+   and only the first headline line passes behind it. */
+.hero__shot {
+  position: absolute; z-index: 2;
+  top: 50%; left: 50%;
+  width: min(268px, 28vw);
+  transform: translate(-50%, -50%);
+  animation: drift 12s var(--ease-soft) infinite;
+  pointer-events: none;
+}
+.hero__shot .shot__pending { display: none; }
+.hero__shot img {
+  -webkit-mask-image: radial-gradient(ellipse 60% 58% at 50% 48%, #000 52%, transparent 78%);
+          mask-image: radial-gradient(ellipse 60% 58% at 50% 48%, #000 52%, transparent 78%);
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.55));
+}
+@keyframes drift {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+  50%      { transform: translate(-50%, calc(-50% - 13px)) rotate(-1.4deg); }
+}
 
 /* In the dark the headline is charged too — a slow bloom of the glow.
    This deliberately does NOT use background-clip:text: the glyphs live in
@@ -547,24 +631,10 @@ s { text-decoration-thickness: 1px; }
   74%           { text-shadow: 0 0 46px color-mix(in oklab, var(--glow) 55%, transparent); }
 }
 
-.hero__shot {
-  position: absolute; z-index: 2;
-  top: 50%; left: 50%;
-  width: min(304px, 31vw);
-  transform: translate(-50%, -50%);
-  animation: drift 12s var(--ease-soft) infinite;
-}
-.hero__shot .shot__pending { display: none; }
-.hero__shot img { filter: drop-shadow(0 30px 60px rgba(0,0,0,0.45)); }
-@keyframes drift {
-  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-  50%      { transform: translate(-50%, calc(-50% - 13px)) rotate(-1.4deg); }
-}
-
 .hero__bloom {
   position: absolute; z-index: -1;
   top: 50%; left: 50%;
-  width: 260%; aspect-ratio: 1;
+  width: min(1100px, 130vw); aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: radial-gradient(circle, color-mix(in oklab, var(--accent) 42%, transparent) 0%, transparent 62%);
@@ -600,10 +670,22 @@ s { text-decoration-thickness: 1px; }
 
 .lights { overflow: hidden; }
 
+.lights__grid {
+  display: grid;
+  grid-template-columns: 1fr 0.82fr;
+  gap: clamp(1.75rem, 4vw, 4rem);
+  align-items: center;
+}
+.lights__copy { margin-bottom: 0; align-content: center; }
+.lights__copy .lamp--big { justify-self: start; margin-top: 0.6rem; }
+
 .lights__stage {
   position: relative;
   display: grid; place-items: center;
-  padding: clamp(1.6rem, 3.5vw, 2.75rem) var(--gutter) clamp(3rem, 5.5vw, 4.25rem);
+  width: 100%;
+  max-width: 420px;
+  margin-inline: auto;
+  aspect-ratio: 1;
   border: 1px solid var(--hairline-soft);
   border-radius: 26px;
   background: var(--surface);
@@ -626,7 +708,7 @@ s { text-decoration-thickness: 1px; }
 
 .lights__shot {
   grid-area: 1 / 1;
-  width: min(288px, 48vw);
+  width: 100%; height: 100%;
   transition: opacity 800ms var(--ease-soft),
               transform 1050ms var(--ease-expo),
               filter 800ms var(--ease-soft);
@@ -637,13 +719,6 @@ s { text-decoration-thickness: 1px; }
 :root[data-theme="dark"] .lights__shot--on  { opacity: 0; transform: scale(0.97); filter: blur(8px); }
 :root[data-theme="dark"] .lights__shot--off { opacity: 1; transform: none; filter: none; }
 .lights__shot--off img { filter: drop-shadow(0 0 60px color-mix(in oklab, var(--glow) 55%, transparent)); }
-
-.lights .lamp--big {
-  grid-area: 1 / 1;
-  align-self: end; justify-self: center;
-  position: relative; z-index: 4;
-  margin-bottom: clamp(-2.75rem, -4.5vw, -2rem);
-}
 
 .claims {
   display: grid;
@@ -661,7 +736,7 @@ s { text-decoration-thickness: 1px; }
 
 .colourways__grid {
   display: grid;
-  grid-template-columns: 1fr 0.85fr;
+  grid-template-columns: 0.9fr 1fr;
   gap: clamp(1.75rem, 4vw, 4rem);
   align-items: center;
 }
@@ -669,7 +744,10 @@ s { text-decoration-thickness: 1px; }
 .colourways__stage {
   position: relative;
   display: grid; place-items: center;
-  aspect-ratio: 1.5;                       /* was 1.05 — a much shorter frame */
+  width: 100%;
+  max-width: 440px;
+  margin-inline: 0 auto;      /* pushed left in its column */
+  aspect-ratio: 1;
   border: 1px solid var(--hairline-soft);
   border-radius: 26px;
   background: var(--surface);
@@ -687,7 +765,7 @@ s { text-decoration-thickness: 1px; }
 
 .cw-shot {
   grid-area: 1 / 1;
-  width: 48%;                              /* was 72% */
+  width: 100%; height: 100%;
   opacity: 0;
   transform: scale(0.94) translateY(14px);
   filter: blur(10px);
@@ -1183,6 +1261,60 @@ s { text-decoration-thickness: 1px; }
   letter-spacing: 0.08em; color: var(--ink-mute); margin: 0;
 }
 
+/* ── Email gate ── */
+.auth {
+  width: min(430px, calc(100vw - 2rem));
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 24px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.6);
+}
+.auth::backdrop {
+  background: color-mix(in oklab, #05050A 72%, transparent);
+  backdrop-filter: blur(6px);
+}
+.auth[open] { animation: authIn 460ms var(--ease-expo); }
+@keyframes authIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+.auth__panel { display: grid; gap: 0.9rem; padding: clamp(1.5rem, 4vw, 2rem); }
+.auth__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 4vw, 2.3rem);
+  font-weight: 400; line-height: 1;
+  letter-spacing: 0.01em; text-transform: uppercase;
+  margin: 0;
+}
+.auth__body { color: var(--ink-soft); font-size: 0.92rem; margin: 0; }
+.auth__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.35rem; }
+.auth__actions .btn { flex: 1 1 auto; }
+
+/* ── Signed-in chip ── */
+.account {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--hairline);
+  border-radius: 100px;
+  background: none; cursor: pointer;
+  font-family: var(--font-mono); font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  max-width: 210px;
+  transition: border-color var(--dur-fast) var(--ease-soft), color var(--dur-fast) var(--ease-soft);
+}
+.account:hover { border-color: var(--accent); color: var(--ink); }
+.account[hidden] { display: none; }
+.account__dot {
+  width: 7px; height: 7px; border-radius: 50%; flex: none;
+  background: var(--accent);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--accent) 70%, transparent);
+}
+.account__email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 /* Toast */
 .toast {
   position: fixed; left: 50%; bottom: 1.5rem; z-index: 150;
@@ -1303,19 +1435,21 @@ s { text-decoration-thickness: 1px; }
 /* ═══════════════════════  18. RESPONSIVE  ═════════════════════════ */
 
 @media (max-width: 1080px) {
-  .colourways__grid, .specs__grid, .checkout__grid { grid-template-columns: 1fr; }
+  .colourways__grid, .specs__grid, .checkout__grid, .lights__grid { grid-template-columns: 1fr; }
   .specs__media, .summary { position: static; }
   .reel__frame { max-width: 440px; margin-inline: auto; }
   .reel__cap { justify-items: center; text-align: center; }
   .ticket { grid-template-columns: 1fr; text-align: center; }
   .ticket__col { justify-items: center; }
   .ticket__col .label, .ticket__build { justify-content: center; }
-  .colourways__stage { aspect-ratio: 1.7; }
+
 }
 
 @media (max-width: 860px) {
   .nav__links { display: none; }
   .bag__label { display: none; }
+  .account__email { display: none; }
+  .account { padding-inline: 0.7rem; }
   .nav__actions .lamp__text { display: none; }
   .nav__inner { gap: 0.6rem; }
   .nav__actions { gap: 0.3rem; }
@@ -1324,16 +1458,15 @@ s { text-decoration-thickness: 1px; }
 
 @media (max-width: 640px) {
   .hero { height: 130vh; }
-  .hero__shot { width: 32vw; }
   .nav__brand .chip--ghost { display: none; }
+  .hero__shot { width: 34vw; }
   .spec-row { grid-template-columns: 1fr; gap: 0.35rem; }
   .fit__grid, .features { grid-template-columns: 1fr; }
   .order-form fieldset { grid-template-columns: 1fr; }
   .bag-item { grid-template-columns: 38px 1fr auto; row-gap: 0.6rem; }
   .bag-item__line { grid-column: 2 / -1; text-align: left; }
   .foot__inner { justify-content: center; text-align: center; }
-  .colourways__stage { aspect-ratio: 1.25; }
-  .cw-shot { width: 56%; }
+
 }
 
 
@@ -1353,7 +1486,8 @@ s { text-decoration-thickness: 1px; }
   .word > i, .hero__line > i { transform: none !important; }
   .hero { height: auto; }
   .hero__sticky { position: static; transform: none !important; opacity: 1 !important; }
-  .hero__shot, .mark { animation: none !important; }
+  .mark, .hero__shot { animation: none !important; }
+  .hero__eyebrow::before { animation: none !important; }
   :root[data-theme="dark"] .hero__title > .hero__line > i,
   :root[data-theme="dark"] .closer__title > .hero__line > i { animation: none !important; }
   .mech__layer { transform: none !important; }

@@ -1,0 +1,9 @@
+{
+  "name": "novacase-storefront",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NovaCase NC-01 storefront. The site itself is static and needs no build; this manifest exists only for the Stripe checkout function in api/.",
+  "dependencies": {
+    "stripe": "^17.0.0"
+  }
+}

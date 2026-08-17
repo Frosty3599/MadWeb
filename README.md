@@ -8,6 +8,7 @@ to GitHub Pages or any static host.
 
 ```
 index.html                  markup and copy
+api/create-checkout-session.js  Stripe Checkout session (server-side pricing)
 assets/css/styles.css       design tokens + every section
 assets/css/fonts.css        Anton / Inter / JetBrains Mono, inlined as data URIs
 assets/js/main.js           motion engine, configurator, bag + checkout
@@ -70,14 +71,68 @@ roll, the spec cascade, the counters.
 Every animation collapses under `prefers-reduced-motion: reduce`, which leaves
 the page fully usable and fully visible.
 
+## Turning on Stripe
+
+The storefront ships in **demonstration mode**: the bag and checkout work
+end to end, but no payment is taken and no card details are collected.
+
+Stripe cannot be driven from a static page — a secret key in the browser is a
+secret given away. So payment goes through one small server function that
+prices the bag, creates a Checkout Session and hands back a URL to redirect
+to. The site itself stays static and holds no key.
+
+1. **Deploy the function.** `api/create-checkout-session.js` is a standard
+   Node serverless handler. On Vercel the path works as-is. On Netlify move it
+   to `netlify/functions/create-checkout-session.js`; on Cloudflare Workers
+   wrap it in a `fetch` handler. Run `npm install` so `stripe` is available.
+
+2. **Set two environment variables** on the host:
+
+   | Variable | Value |
+   |---|---|
+   | `STRIPE_SECRET_KEY` | `sk_test_…` while testing, `sk_live_…` in production |
+   | `SITE_URL` | `https://your-domain.example` — used for the return links |
+
+3. **Point the page at it.** In `assets/js/main.js`, set the endpoint:
+
+   ```js
+   var PAYMENTS = { endpoint: '/api/create-checkout-session' };
+   ```
+
+   The button changes from "Place order" to "Pay with card" on its own.
+
+4. **Test** with Stripe's `4242 4242 4242 4242`, any future expiry, any CVC.
+
+### What the server decides, not the browser
+
+The page sends only a fit key, a colourway and a quantity. Prices live in the
+function's own `CATALOGUE` and nowhere else, so a tampered client cannot
+invent a cheaper case — this is covered by a test that sends `price: 0.01`
+and confirms the session is still built at $19.99. Quantities are bounded,
+unknown fits and colourways are rejected, and Stripe errors are logged
+server-side rather than returned to the browser.
+
+Change a price in **both** places: the `data-price` attribute in `index.html`
+(what the shopper sees) and `CATALOGUE` in the function (what they are
+charged). They are deliberately separate — the browser copy is never trusted.
+
+## Signing in
+
+Pressing **Add to bag** asks for an email before the first item goes in. The
+address is stored in `localStorage`, shown in the nav, prefilled into
+checkout, and passed to Stripe so the receipt goes to the right place.
+
+This is identity capture, not authenticated login: with no backend there is
+nobody to verify the address against and no password or magic link involved.
+Treat it as "where should we email this", not as proof of who someone is. If
+you need real accounts, that needs a backend and a session store.
+
 ## Notes
 
-- The 360° video is H.264/AAC and plays muted and looping. Chromium builds
-  without proprietary codecs (including Playwright's bundled one) cannot decode
-  it; Chrome, Safari, Edge and Firefox all can.
-- Typography is Anton (display), Inter (body) and JetBrains Mono (utility), inlined
-  as woff2 data URIs — the page makes zero network requests and renders identically
-  offline.
-- The checkout is a demonstration flow: it takes no payment and never collects card
-  details. Wire the "Place order" handler in `main.js` to a real processor before
-  using it commercially.
+- The 360° video is H.264, muted and looping, with the audio track stripped —
+  466 KB down to 138 KB at SSIM 0.991 against the original.
+- Typography is Anton (display), Inter (body) and JetBrains Mono (utility),
+  inlined as woff2 data URIs — the page makes zero network requests and
+  renders identically offline.
+- The specification figures are drafted placeholders. Check them against the
+  real product before publishing.

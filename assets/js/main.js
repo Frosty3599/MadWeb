@@ -28,6 +28,15 @@
   var FREE_SHIPPING_OVER = 25;
   var SHIPPING_FLAT      = 3.99;
 
+  /* Stripe. A secret key can never live in the browser, so payment runs
+     through a server function that creates the Checkout Session and hands
+     back a redirect URL. Point `endpoint` at your deployed function
+     (see README) — while it is empty the page runs the demo flow instead. */
+  var PAYMENTS = {
+    endpoint: ''   /* e.g. '/api/create-checkout-session' */
+  };
+  var liveCheckout = function () { return !!PAYMENTS.endpoint; };
+
   var money = function (n) { return '$' + Number(n).toFixed(2); };
 
 
@@ -46,14 +55,6 @@
     });
   }
   $$('[data-shot]').forEach(watchShot);
-
-  function swapShot(fig, src) {
-    var img = $('img', fig);
-    if (!img || img.getAttribute('src') === src) return;
-    fig.classList.remove('is-missing');
-    img.setAttribute('src', src);
-    if (img.complete && img.naturalWidth === 0) fig.classList.add('is-missing');
-  }
 
 
   /* ═══════════  2. THE LAMP / THEME  ═══════════ */
@@ -99,7 +100,6 @@
   var cwButtons = $$('[data-cw-btn]');
   var cwName    = $('[data-cw-name]');
   var cwNote    = $('[data-cw-note]');
-  var heroShot  = $('[data-hero-shot]');
 
   function rollText(el, next) {
     if (!el) return;
@@ -123,9 +123,6 @@
     rollText(cwName, data.name);
     if (cwNote) cwNote.textContent = data.note;
     $$('[data-summary-colour]').forEach(function (el) { el.textContent = data.name; });
-
-    /* the hero is part of the configurator, so it follows the choice too */
-    if (heroShot) swapShot(heroShot, 'assets/images/' + key + '.jpg');
   }
 
   cwButtons.forEach(function (btn) {
@@ -234,7 +231,90 @@
   });
 
 
-  /* ═══════════  5. THE BAG  ═══════════ */
+  /* ═══════════  5. IDENTITY — the email gate  ═══════════ */
+
+  /* Pressing "Add to bag" asks who you are first. This is an identity
+     capture, not authenticated login: without a backend there is nobody to
+     verify the address against, so treat it as "who should we email", not
+     as proof of who someone is. */
+  var authDialog = $('[data-auth]');
+  var authForm   = $('[data-auth-form]');
+  var authInput  = $('[data-auth-input]');
+  var accountBtn = $('[data-account]');
+  var pendingAdd = null;
+  var shopper    = null;
+
+  try { shopper = localStorage.getItem('nc-email') || null; } catch (e) {}
+
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function paintAccount() {
+    if (!accountBtn) return;
+    accountBtn.hidden = !shopper;
+    if (shopper) {
+      $('[data-account-email]', accountBtn).textContent = shopper;
+      accountBtn.setAttribute('aria-label', 'Signed in as ' + shopper + ' — sign out');
+      accountBtn.title = 'Sign out';
+    }
+    /* the checkout form already knows who you are */
+    var e = $('#of-email');
+    if (e && shopper && !e.value) e.value = shopper;
+  }
+
+  function openGate() {
+    if (!authDialog) return false;
+    if (authInput) authInput.value = shopper || '';
+    markField(authInput, '');
+    if (typeof authDialog.showModal === 'function') authDialog.showModal();
+    else authDialog.setAttribute('open', '');
+    window.setTimeout(function () { if (authInput) authInput.focus(); }, 60);
+    return true;
+  }
+
+  function closeGate() {
+    if (!authDialog) return;
+    if (typeof authDialog.close === 'function') authDialog.close();
+    else authDialog.removeAttribute('open');
+  }
+
+  function signIn(email) {
+    shopper = email;
+    try { localStorage.setItem('nc-email', email); } catch (e) {}
+    paintAccount();
+  }
+
+  if (authForm) {
+    authForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = (authInput.value || '').trim();
+      if (!EMAIL_RE.test(v)) {
+        markField(authInput, 'Enter an email we can send the confirmation to.');
+        authInput.focus();
+        return;
+      }
+      signIn(v);
+      closeGate();
+      toast('Signed in as ' + v);
+      if (pendingAdd) { var p = pendingAdd; pendingAdd = null; commitAdd(p.button); }
+    });
+    authInput.addEventListener('input', function () { markField(authInput, ''); });
+  }
+
+  var authCancel = $('[data-auth-cancel]');
+  if (authCancel) authCancel.addEventListener('click', function () { pendingAdd = null; closeGate(); });
+  if (authDialog) authDialog.addEventListener('cancel', function () { pendingAdd = null; });
+
+  if (accountBtn) {
+    accountBtn.addEventListener('click', function () {
+      shopper = null;
+      try { localStorage.removeItem('nc-email'); } catch (e) {}
+      accountBtn.hidden = true;
+      toast('Signed out');
+    });
+  }
+
+
+  /* ═══════════  6. THE BAG  ═══════════ */
 
   var bagList   = $('[data-bag-list]');
   var bagEmpty  = $('[data-bag-empty]');
@@ -352,7 +432,16 @@
     renderBag();
   }
 
+  /* Gate first, then add. commitAdd is what actually touches the bag. */
   function addToBag(button) {
+    if (!shopper) {
+      pendingAdd = { button: button };
+      if (openGate()) return;          /* dialog unsupported → fall through */
+    }
+    commitAdd(button);
+  }
+
+  function commitAdd(button) {
     var fitBtn = currentFitButton();
     if (!fitBtn) return;
 
@@ -404,7 +493,8 @@
 
   function markField(input, message) {
     var wrap = input.closest('.field');
-    var err  = $('[data-err-for="' + input.name + '"]');
+    /* both forms have a field named "email" — id wins so they never collide */
+    var err  = $('[data-err-for="' + input.id + '"]') || $('[data-err-for="' + input.name + '"]');
     if (wrap) wrap.classList.toggle('is-bad', !!message);
     if (err) err.textContent = message || '';
     input.setAttribute('aria-invalid', message ? 'true' : 'false');
@@ -436,17 +526,63 @@
       var bad = validate(orderForm);
       if (bad) { bad.focus(); toast('Check the highlighted fields'); return; }
 
-      var ref = 'NC-' + String(Math.floor(100000 + Math.random() * 900000));
-      $$('[data-order-ref]').forEach(function (el) { el.textContent = ref; });
-      $$('[data-order-email]').forEach(function (el) { el.textContent = $('#of-email').value.trim(); });
-
-      bag = [];
-      renderBag();
-      orderForm.hidden = true;
-      if (bagEmpty) bagEmpty.hidden = true;
-      if (orderDone) orderDone.hidden = false;
-      toast('Order ' + ref + ' placed');
+      if (liveCheckout()) payWithStripe();
+      else                completeDemoOrder();
     });
+  }
+
+  function setOrderBusy(busy, text) {
+    var btn = $('[data-place-order]');
+    var lbl = $('[data-order-label]');
+    if (!btn) return;
+    btn.disabled = busy;
+    btn.setAttribute('aria-busy', String(busy));
+    if (lbl) lbl.textContent = text || (liveCheckout() ? 'Pay with card' : 'Place order');
+  }
+
+  /* Hand the bag to our own server function, which prices it against its own
+     catalogue, creates the Stripe Checkout Session and returns the URL to
+     send the shopper to. No key and no amount is ever trusted from here. */
+  function payWithStripe() {
+    setOrderBusy(true, 'Contacting Stripe…');
+
+    fetch(PAYMENTS.endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: $('#of-email').value.trim(),
+        items: bag.map(function (it) { return { fit: it.fit, colour: it.colour, qty: it.qty }; })
+      })
+    })
+      .then(function (r) {
+        return r.json().then(function (data) {
+          if (!r.ok) throw new Error(data && data.error ? data.error : 'Checkout failed (' + r.status + ')');
+          return data;
+        });
+      })
+      .then(function (data) {
+        if (!data.url) throw new Error('Checkout session returned no URL');
+        window.location.assign(data.url);      /* Stripe-hosted payment page */
+      })
+      .catch(function (err) {
+        setOrderBusy(false);
+        toast(err.message || 'Could not reach checkout');
+        var note = $('[data-pay-note]');
+        if (note) note.textContent = 'Could not start checkout: ' + (err.message || 'network error') + '. Your bag is untouched.';
+      });
+  }
+
+  function completeDemoOrder() {
+    var ref = 'NC-' + String(Math.floor(100000 + Math.random() * 900000));
+    $$('[data-order-ref]').forEach(function (el) { el.textContent = ref; });
+    $$('[data-order-email]').forEach(function (el) { el.textContent = $('#of-email').value.trim(); });
+
+    bag = [];
+    renderBag();
+    orderForm.hidden = true;
+    if (bagEmpty) bagEmpty.hidden = true;
+    if (orderDone) orderDone.hidden = false;
+    toast('Order ' + ref + ' placed');
   }
 
   var resetBtn = $('[data-order-reset]');
@@ -587,6 +723,8 @@
       var span = box.height - vh;
       var p    = span > 0 ? (-box.top) / span : (vh - box.top) / (vh + box.height);
       sec.style.setProperty('--sec-progress', Math.min(Math.max(p, 0), 1).toFixed(4));
+      /* pause animation well outside the viewport rather than burning frames */
+      sec.classList.toggle('is-offscreen', box.bottom < -160 || box.top > vh + 160);
     });
 
     sweepReveals();
@@ -624,6 +762,12 @@
 
   /* ═══════════  11. BOOT  ═══════════ */
 
+  paintAccount();
+  setOrderBusy(false);
+  if (liveCheckout()) {
+    var note = $('[data-pay-note]');
+    if (note) note.textContent = 'Payment is handled by Stripe. Card details are entered on Stripe\u2019s own page and never touch this site.';
+  }
   setColour(root.dataset.color || 'forest-green');
   setFit(root.dataset.fit || 'pods12');
   renderBag();

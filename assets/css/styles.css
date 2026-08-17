@@ -284,6 +284,14 @@ s { text-decoration-thickness: 1px; }
 .btn.is-done::before { transform: translateY(101%); }
 
 
+/* Anything scrolled well clear of the viewport stops animating. Fourteen
+   infinite animations running at once is battery the visitor never sees. */
+.is-offscreen,
+.is-offscreen *,
+.is-offscreen *::before,
+.is-offscreen *::after { animation-play-state: paused !important; }
+
+
 /* ─────────────────────  5. MOTION PRIMITIVES  ───────────────────── */
 
 [data-reveal] {
@@ -348,11 +356,11 @@ s { text-decoration-thickness: 1px; }
    product shot on the page sits at one consistent size and shape. */
 .shot img {
   position: relative; z-index: 2;
-  width: 100%;
+  width: 100%; height: 100%;
   aspect-ratio: 1;
   object-fit: cover;
   object-position: center;
-  border-radius: 18px;
+  border-radius: 0;
   transition: opacity var(--dur) var(--ease-soft);
 }
 
@@ -515,7 +523,49 @@ s { text-decoration-thickness: 1px; }
   transform-origin: 50% 40%;
 }
 
-.hero__eyebrow { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+/* ── OVERDRIVE: the eyebrow is a charged filament, not a label ──
+   A conic sweep rotates behind a 1px rim, an inner fill masks all but that
+   rim, and the whole pill sits in its own glow. It is the first thing on the
+   page and it should already be doing the thing the product does. */
+.hero__eyebrow {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  padding: 1px;                        /* the rim thickness */
+  border-radius: 100px;
+  overflow: hidden;
+  box-shadow: 0 0 26px -6px color-mix(in oklab, var(--glow) 45%, transparent);
+}
+.hero__eyebrow::before {
+  content: "";
+  position: absolute; inset: -160%; z-index: 0;
+  background: conic-gradient(from 0deg,
+              transparent 0 62%,
+              color-mix(in oklab, var(--accent) 85%, transparent) 78%,
+              var(--glow) 88%,
+              transparent 96% 100%);
+  animation: filament 4.2s linear infinite;
+}
+@keyframes filament { to { transform: rotate(1turn); } }
+
+.hero__eyebrow-inner {
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; gap: 0.6em;
+  padding: 0.5em 1.15em;
+  border-radius: inherit;
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: var(--fs-chip);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  white-space: nowrap;
+  transition: letter-spacing var(--dur) var(--ease-expo),
+              background-color var(--theme-dur) var(--ease-soft);
+}
+.hero__eyebrow:hover .hero__eyebrow-inner { letter-spacing: 0.26em; }
+.mark--sm { width: 13px; height: 13px; }
 
 /* No product shot here any more — the hero is the type. */
 .hero__stack { position: relative; display: grid; place-items: center; width: 100%; }
@@ -541,8 +591,30 @@ s { text-decoration-thickness: 1px; }
 }
 [data-stack].is-in .hero__line > i { transform: none; }
 
-.hero__line--back  { position: relative; z-index: 1; }
-.hero__line--front { position: relative; z-index: 3; }
+.hero__line          { position: relative; z-index: 3; }
+.hero__line--back    { z-index: 1; }
+
+/* The product shot returns to the hero. It is a photograph with its own
+   background, so it is feathered into the page rather than dropped on top,
+   and only the first headline line passes behind it. */
+.hero__shot {
+  position: absolute; z-index: 2;
+  top: 50%; left: 50%;
+  width: min(268px, 28vw);
+  transform: translate(-50%, -50%);
+  animation: drift 12s var(--ease-soft) infinite;
+  pointer-events: none;
+}
+.hero__shot .shot__pending { display: none; }
+.hero__shot img {
+  -webkit-mask-image: radial-gradient(ellipse 60% 58% at 50% 48%, #000 52%, transparent 78%);
+          mask-image: radial-gradient(ellipse 60% 58% at 50% 48%, #000 52%, transparent 78%);
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.55));
+}
+@keyframes drift {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+  50%      { transform: translate(-50%, calc(-50% - 13px)) rotate(-1.4deg); }
+}
 
 /* In the dark the headline is charged too — a slow bloom of the glow.
    This deliberately does NOT use background-clip:text: the glyphs live in
@@ -614,7 +686,6 @@ s { text-decoration-thickness: 1px; }
   max-width: 420px;
   margin-inline: auto;
   aspect-ratio: 1;
-  padding: clamp(1.1rem, 2.2vw, 1.75rem);
   border: 1px solid var(--hairline-soft);
   border-radius: 26px;
   background: var(--surface);
@@ -637,7 +708,7 @@ s { text-decoration-thickness: 1px; }
 
 .lights__shot {
   grid-area: 1 / 1;
-  width: 100%;
+  width: 100%; height: 100%;
   transition: opacity 800ms var(--ease-soft),
               transform 1050ms var(--ease-expo),
               filter 800ms var(--ease-soft);
@@ -675,9 +746,8 @@ s { text-decoration-thickness: 1px; }
   display: grid; place-items: center;
   width: 100%;
   max-width: 440px;
-  margin-inline: auto;
+  margin-inline: 0 auto;      /* pushed left in its column */
   aspect-ratio: 1;
-  padding: clamp(1.1rem, 2.2vw, 1.75rem);
   border: 1px solid var(--hairline-soft);
   border-radius: 26px;
   background: var(--surface);
@@ -695,7 +765,7 @@ s { text-decoration-thickness: 1px; }
 
 .cw-shot {
   grid-area: 1 / 1;
-  width: 100%;
+  width: 100%; height: 100%;
   opacity: 0;
   transform: scale(0.94) translateY(14px);
   filter: blur(10px);
@@ -1333,6 +1403,7 @@ s { text-decoration-thickness: 1px; }
 @media (max-width: 640px) {
   .hero { height: 130vh; }
   .nav__brand .chip--ghost { display: none; }
+  .hero__shot { width: 34vw; }
   .spec-row { grid-template-columns: 1fr; gap: 0.35rem; }
   .fit__grid, .features { grid-template-columns: 1fr; }
   .order-form fieldset { grid-template-columns: 1fr; }
@@ -1359,7 +1430,8 @@ s { text-decoration-thickness: 1px; }
   .word > i, .hero__line > i { transform: none !important; }
   .hero { height: auto; }
   .hero__sticky { position: static; transform: none !important; opacity: 1 !important; }
-  .mark { animation: none !important; }
+  .mark, .hero__shot { animation: none !important; }
+  .hero__eyebrow::before { animation: none !important; }
   :root[data-theme="dark"] .hero__title > .hero__line > i,
   :root[data-theme="dark"] .closer__title > .hero__line > i { animation: none !important; }
   .mech__layer { transform: none !important; }

@@ -575,6 +575,8 @@
       var span = box.height - vh;
       var p    = span > 0 ? (-box.top) / span : (vh - box.top) / (vh + box.height);
       sec.style.setProperty('--sec-progress', Math.min(Math.max(p, 0), 1).toFixed(4));
+      /* pause animation well outside the viewport rather than burning frames */
+      sec.classList.toggle('is-offscreen', box.bottom < -160 || box.top > vh + 160);
     });
 
     sweepReveals();

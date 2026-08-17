@@ -66,16 +66,29 @@
   <section class="hero" id="top" data-section>
     <div class="hero__sticky">
 
-      <p class="hero__eyebrow chip">NovaCase — Quicksand Glow Edition</p>
+      <p class="hero__eyebrow">
+        <span class="hero__eyebrow-inner">
+          <svg class="mark mark--sm" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2 L13.8 9.4 L21.2 12 L13.8 14.6 L12 22 L10.2 14.6 L2.8 12 L10.2 9.4 Z"/>
+          </svg>
+          NovaCase — Quicksand Glow Edition
+        </span>
+      </p>
 
       <div class="hero__stack" data-stack>
         <span class="hero__bloom" aria-hidden="true"></span>
         <h1 class="hero__title">
-          <span class="hero__line"><i>Glows all</i></span>
+          <!-- Only the first line passes behind the shot, so every word reads. -->
+          <span class="hero__line hero__line--back"><i>Glows all</i></span>
           <span class="hero__line"><i>night.</i></span>
           <span class="hero__line"><i>Guards all</i></span>
           <span class="hero__line"><i>day.</i></span>
         </h1>
+
+        <figure class="shot hero__shot" data-shot>
+          <img src="assets/images/forest-green.jpg" alt="A NovaCase glow case held in one hand, its liquid core catching the light." width="676" height="595" fetchpriority="high" decoding="async">
+          <figcaption class="shot__pending">Photograph pending</figcaption>
+        </figure>
       </div>
 
       <div class="hero__foot">
@@ -115,12 +128,12 @@
           <span class="lights__glow" aria-hidden="true"></span>
 
           <figure class="shot lights__shot lights__shot--on" data-shot>
-            <img src="assets/images/glow-off.jpg" alt="The case in a lit room — an ordinary deep red finish." width="363" height="382">
+            <img src="assets/images/glow-off.jpg" alt="The case in a lit room — an ordinary deep red finish." width="363" height="382" loading="lazy" decoding="async">
             <figcaption class="shot__pending">Photograph pending</figcaption>
           </figure>
 
           <figure class="shot lights__shot lights__shot--off" data-shot>
-            <img src="assets/images/glow-on.jpg" alt="The same case in darkness, burning cyan from within." width="988" height="963">
+            <img src="assets/images/glow-on.jpg" alt="The same case in darkness, burning cyan from within." width="988" height="963" loading="lazy" decoding="async">
             <figcaption class="shot__pending">Photograph pending</figcaption>
           </figure>
         </div>
@@ -147,15 +160,15 @@
           <span class="colourways__halo" aria-hidden="true"></span>
 
           <figure class="shot cw-shot" data-cw="forest-green" data-shot>
-            <img src="assets/images/forest-green.jpg" alt="Forest Green — a vivid green suspension over a graphite base." width="676" height="596">
+            <img src="assets/images/forest-green.jpg" alt="Forest Green — a vivid green suspension over a graphite base." width="676" height="596" loading="lazy" decoding="async">
             <figcaption class="shot__pending">Photograph pending</figcaption>
           </figure>
           <figure class="shot cw-shot" data-cw="amber-red" data-shot>
-            <img src="assets/images/amber-red.jpg" alt="Amber Red — molten red bleeding into black." width="418" height="378">
+            <img src="assets/images/amber-red.jpg" alt="Amber Red — molten red bleeding into black." width="418" height="378" loading="lazy" decoding="async">
             <figcaption class="shot__pending">Photograph pending</figcaption>
           </figure>
           <figure class="shot cw-shot" data-cw="midnight-blue" data-shot>
-            <img src="assets/images/midnight-blue.jpg" alt="Midnight Blue — deep teal fading to ink." width="418" height="378">
+            <img src="assets/images/midnight-blue.jpg" alt="Midnight Blue — deep teal fading to ink." width="418" height="378" loading="lazy" decoding="async">
             <figcaption class="shot__pending">Photograph pending</figcaption>
           </figure>
         </div>
@@ -379,7 +392,7 @@
   </section>
 
   <!-- ══════════  TICKER  ══════════ -->
-  <section class="ticker" aria-hidden="true">
+  <section class="ticker" aria-hidden="true" data-section>
     <div class="ticker__track">
       <span>Photoluminescent core</span><span class="ticker__dot">◦</span>
       <span>Anti-dust</span><span class="ticker__dot">◦</span>

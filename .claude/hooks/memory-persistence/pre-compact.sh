@@ -1,0 +1,1 @@
+../../../.agents/hooks/memory-persistence/pre-compact.sh

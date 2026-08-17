@@ -1,0 +1,1 @@
+../../../.agents/hooks/strategic-compact/suggest-compact.sh

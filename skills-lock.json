@@ -79,5 +79,249 @@
       "skillPath": "skills/verification-loop/SKILL.md",
       "computedHash": "850ae034c334a3c88428921043d6a2b3441284ee85b4d749fa19c62194190eaa"
     }
+  },
+  "agents": {
+    "architect": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "agents/architect.md",
+      "computedHash": "ff5132105d94ac162445bfd618912faff1ec624976d0fdd1a4fd4d803ee0929f"
+    },
+    "build-error-resolver": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "agents/build-error-resolver.md",
+      "computedHash": "9069459f344ff1e3224114fdcc8604ee9fee4f927a175375dba62567d0158848"
+    },
+    "code-reviewer": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "agents/code-reviewer.md",
+      "computedHash": "901e9c6770dca1b5331a2560f6f7ed477cc051f42dca9ea28682e1a14e0f46e1"
+    },
+    "doc-updater": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "agents/doc-updater.md",
+      "computedHash": "45a3b89e1811b259e068514b3cd86cfbfe5426e71a54ba0b8065034be877189a"
+    },
+    "e2e-runner": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "agents/e2e-runner.md",
+      "computedHash": "4cedf90b29be92a84862cbb7be7d0b1f8795b453bd0f46601922447f00e082f4"
+    },
+    "planner": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "agents/planner.md",
+      "computedHash": "21b7689638cda339f6483cc17e56bb77f447c12fd0b270f3c4df96a90e19afea"
+    },
+    "refactor-cleaner": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "agents/refactor-cleaner.md",
+      "computedHash": "4d020df6580ed72d5fdfe8f1078c3489b4e819d16db4c65c0c49666ce3afde70"
+    },
+    "security-reviewer": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "agents/security-reviewer.md",
+      "computedHash": "d18092f4a6c48d8a04b5fd0bd722ecf2b1575facf0068880ba892a254d885416"
+    },
+    "tdd-guide": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "agents/tdd-guide.md",
+      "computedHash": "021b098e5bb38f8dd7b66367eedc389b099af51e552125d2de21be0b88c9c374"
+    }
+  },
+  "commands": {
+    "build-fix": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/build-fix.md",
+      "computedHash": "0f032c67e3ea07cf479c5658ee2d52a5d72a68fe222d6b8644865f08676d0eaf"
+    },
+    "checkpoint": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/checkpoint.md",
+      "computedHash": "688a05474a64fb9543841d8e428a3a27dfb999bb88c0e648df09961b2247ddad"
+    },
+    "code-review": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/code-review.md",
+      "computedHash": "690b878d1b9ba6ecf6c1ce180ec5de0d79db5575d367e52f91031f103a2ff9df"
+    },
+    "e2e": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/e2e.md",
+      "computedHash": "eb0f0d68d5f58d0c5dd0d59fe653c22cc104b8f4a51df621eac04f5aeb7ca1b2"
+    },
+    "eval": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/eval.md",
+      "computedHash": "7c8e20c659952ce33b248d83517ad988abefe0bff31580a937896b3531a8798f"
+    },
+    "learn": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/learn.md",
+      "computedHash": "696c0a0aa3d5053ff3b383f167225fcc8dc8b91f1bc54fea2bf3826e830a70e8"
+    },
+    "orchestrate": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/orchestrate.md",
+      "computedHash": "a9d8de11e90a08b9d6dc2b879e7aa12c19335c5adf37c4d5d6d2b4904ecbe443"
+    },
+    "plan": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/plan.md",
+      "computedHash": "1256a4e93f26fdcd08c7613f427171162cbbfed7c6ab3b0bb243c9c37e3004a9"
+    },
+    "refactor-clean": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/refactor-clean.md",
+      "computedHash": "52b0fdafc9172d79fd2655e56926f82d1ea2b64356e7edf725be7564d73f3a16"
+    },
+    "setup-pm": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/setup-pm.md",
+      "computedHash": "163b3cd106028d21dbd2a91b47f1cf99957e40a78ed9e5e5dc8507e225f73a2d"
+    },
+    "tdd": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/tdd.md",
+      "computedHash": "1a39722b8c90680de728537fffa94f9e6f800dad6bdb04fa9bc3171a8573d1cf"
+    },
+    "test-coverage": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/test-coverage.md",
+      "computedHash": "7057b0ae2423a805a6b4095c2a9569b841f0080356bd9bf0d49c6ce422a9c80a"
+    },
+    "update-codemaps": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/update-codemaps.md",
+      "computedHash": "c59a8c73f414b12747bb20611ca6cf204e3c552935d050af5adf704efac4723c"
+    },
+    "update-docs": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/update-docs.md",
+      "computedHash": "752fc73c254d74039d5046cfb2f77b132cd990fa78b97c0ee9d6e72d91db4976"
+    },
+    "verify": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "commands/verify.md",
+      "computedHash": "22ad1cca29aa497327d466836e16604a9b4561c2fd6a293ec7ab5780f9966708"
+    }
+  },
+  "rules": {
+    "agents": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "rules/agents.md",
+      "computedHash": "46a1f64b8c91c9925bb5e0f246bb06f35941b0c91d7f2df5b42002e793bc8d1b"
+    },
+    "coding-style": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "rules/coding-style.md",
+      "computedHash": "cea2bd8733c5990df622a668a64583918311727ca80f6ebb1d21906485c39d13"
+    },
+    "git-workflow": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "rules/git-workflow.md",
+      "computedHash": "d459aa29c87c357e991999ce6e6919cea5ec52b802fa1c32c267070208141a69"
+    },
+    "hooks": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "rules/hooks.md",
+      "computedHash": "d5203186da18a33682594523e246f9d568a220924e14c4d52b2a6320d889fba5"
+    },
+    "patterns": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "rules/patterns.md",
+      "computedHash": "59db6b8613765281da7df04b4b0691d321ceb5c79010fecb45d2a0dab38b1928"
+    },
+    "performance": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "rules/performance.md",
+      "computedHash": "adb3d43274b3128fe9c95445b6929a40110a834b5e274479548291776802d25e"
+    },
+    "security": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "rules/security.md",
+      "computedHash": "e50b3e6cba92c526352d2e6e9b7f3576535e6691e1422e663934007b9555d4e0"
+    },
+    "testing": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "rules/testing.md",
+      "computedHash": "57165420d2e3ab455ea57189bcaaaa78f2ca0dc00439bcccdc29381229ac8bb7"
+    }
+  },
+  "hooks": {
+    "hooks.json": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "hooks/hooks.json",
+      "computedHash": "312bcff2aecad9cb41a0da7f77de4e774d5b00609fe523d597a0bda4657d559c",
+      "note": "Mirrored for reference only; not merged into .claude/settings.json, so these hooks do not run yet."
+    },
+    "memory-persistence/pre-compact.sh": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "hooks/memory-persistence/pre-compact.sh",
+      "computedHash": "7065beca37c48aca5c293236ce1903d821e3ad00ff48a106addb97e17fd323b0",
+      "note": "Mirrored for reference only; not merged into .claude/settings.json, so these hooks do not run yet."
+    },
+    "memory-persistence/session-end.sh": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "hooks/memory-persistence/session-end.sh",
+      "computedHash": "ebe220f6bdaea2858a2f6600c4d711c41250a3da29f496ecbf2000ee86d7fd69",
+      "note": "Mirrored for reference only; not merged into .claude/settings.json, so these hooks do not run yet."
+    },
+    "memory-persistence/session-start.sh": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "hooks/memory-persistence/session-start.sh",
+      "computedHash": "63ced9319d772ec8e43cf34aa6fc445fb0302a2e2fc10a3427d8e2d5ce2d5792",
+      "note": "Mirrored for reference only; not merged into .claude/settings.json, so these hooks do not run yet."
+    },
+    "strategic-compact/suggest-compact.sh": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "hooks/strategic-compact/suggest-compact.sh",
+      "computedHash": "a60d23a91d373c309d41286da3fe2326f79b3563ed27d29c847c51c0443ec0b0",
+      "note": "Mirrored for reference only; not merged into .claude/settings.json, so these hooks do not run yet."
+    }
+  },
+  "mcpConfigs": {
+    "mcp-servers.json": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "path": "mcp-configs/mcp-servers.json",
+      "computedHash": "6d420e5bab0eee61298a39e38531f00ae58b1f6a196495b3aa01f95fb2aa8008",
+      "note": "Reference template with placeholder credentials (YOUR_*_HERE); not copied to .mcp.json, so no MCP servers are active yet."
+    }
   }
 }

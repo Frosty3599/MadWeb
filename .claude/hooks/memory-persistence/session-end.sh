@@ -1,0 +1,1 @@
+../../../.agents/hooks/memory-persistence/session-end.sh

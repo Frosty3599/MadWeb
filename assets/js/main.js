@@ -606,7 +606,7 @@
      produces sizes that are wrong the moment the real font swaps in. */
   var heroTitle = $('.hero__title');
 
-  function fitHero() {
+  function fitHero(final) {
     if (!heroTitle) return;
     var lines = $$('.hero__line', heroTitle);
     if (!lines.length) return;
@@ -633,17 +633,22 @@
     lines.forEach(function (line, i) {
       line.style.fontSize = (sizes[i] * squash).toFixed(2) + 'px';
     });
-    heroTitle.classList.add('is-fitted');
+
+    /* Only the measurement taken against the real face is final. Marking it
+       fitted is what releases the reveal, so doing it on the fallback pass
+       would show the headline at the wrong size and then resize it in view —
+       which is exactly the layout shift this is here to avoid. */
+    if (final) heroTitle.classList.add('is-fitted');
   }
 
   var heroStack = $('.hero [data-stack]');
 
   if (heroTitle) {
-    var refit = function () { fitHero(); requestTick(); };
+    var refit = function () { fitHero(true); requestTick(); };
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(refit);
     else window.addEventListener('load', refit);
     window.addEventListener('resize', refit);
-    fitHero();
+    fitHero(false);          /* rough pass so the box is never wildly wrong */
   }
 
 
@@ -752,7 +757,7 @@
   }
 
   if (reduce) {
-    fitHero();
+    fitHero(true);
     pending.forEach(function (el) { el.classList.add('is-in'); });
     counters.forEach(runCounter);
     pending = []; counters = [];

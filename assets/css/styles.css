@@ -572,9 +572,13 @@ s { text-decoration-thickness: 1px; }
 .hero__stack {
   position: relative;
   display: grid;
-  align-items: center;
+  align-content: center;
   justify-items: stretch;   /* fitHero measures the real column, not shrink-to-fit */
   width: 100%;
+  /* Reserve the block. The headline is resized by measurement once Anton
+     loads; without a fixed box that resize pushes the lede and buttons down
+     and registers as layout shift. Matches fitHero's own height budget. */
+  min-height: 46vh;
 }
 
 .hero__title {
@@ -618,17 +622,18 @@ s { text-decoration-thickness: 1px; }
    and only the first headline line passes behind it. */
 .hero__shot {
   position: absolute; z-index: 0;
-  top: 50%; left: 50%;
-  width: min(268px, 23vw);
+  top: 57%; left: 50%;          /* nested at the seam between the two lines */
+  width: min(296px, 25vw);
   transform: translate(-50%, -50%);
   animation: drift 12s var(--ease-soft) infinite;
   pointer-events: none;
 }
 .hero__shot .shot__pending { display: none; }
 .hero__shot img {
-  -webkit-mask-image: radial-gradient(ellipse 60% 58% at 50% 48%, #000 52%, transparent 78%);
-          mask-image: radial-gradient(ellipse 60% 58% at 50% 48%, #000 52%, transparent 78%);
-  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.55));
+  /* A true cutout — no feather mask needed, and the shadow follows the
+     silhouette (chain included) rather than a rectangle. */
+  filter: drop-shadow(0 26px 44px rgba(0, 0, 0, 0.6))
+          drop-shadow(0 0 34px color-mix(in oklab, var(--accent) 30%, transparent));
 }
 @keyframes drift {
   0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }

@@ -597,6 +597,56 @@
   }
 
 
+  /* ═══════════  BOLDER — fit the headline to the column  ═══════════ */
+
+  /* Each headline line is measured and sized so it spans the full column
+     width. Short lines therefore run enormous and long lines smaller, which
+     is what makes it read as a poster rather than centred paragraph text.
+     Measurement has to wait for Anton: measuring against the fallback face
+     produces sizes that are wrong the moment the real font swaps in. */
+  var heroTitle = $('.hero__title');
+
+  function fitHero() {
+    if (!heroTitle) return;
+    var lines = $$('.hero__line', heroTitle);
+    if (!lines.length) return;
+
+    var avail = heroTitle.getBoundingClientRect().width;
+    if (avail < 40) return;
+
+    var PROBE = 100;
+    var sizes = lines.map(function (line) {
+      var glyphs = $('i', line);
+      line.style.fontSize = PROBE + 'px';
+      var w = glyphs.getBoundingClientRect().width;
+      return w > 0 ? (avail / w) * PROBE : PROBE;
+    });
+
+    /* Filling the width can overrun the space the hero has to give, so scale
+       the whole block back until the stack fits what is left of the viewport. */
+    var lh = parseFloat(getComputedStyle(heroTitle).lineHeight) /
+             parseFloat(getComputedStyle(heroTitle).fontSize) || 0.82;
+    var budget = Math.max(200, window.innerHeight * 0.46);
+    var total  = sizes.reduce(function (n, s) { return n + s * lh; }, 0);
+    var squash = total > budget ? budget / total : 1;
+
+    lines.forEach(function (line, i) {
+      line.style.fontSize = (sizes[i] * squash).toFixed(2) + 'px';
+    });
+    heroTitle.classList.add('is-fitted');
+  }
+
+  var heroStack = $('.hero [data-stack]');
+
+  if (heroTitle) {
+    var refit = function () { fitHero(); requestTick(); };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(refit);
+    else window.addEventListener('load', refit);
+    window.addEventListener('resize', refit);
+    fitHero();
+  }
+
+
   /* ═══════════  7. TEXT SPLITTING  ═══════════ */
 
   $$('[data-split]').forEach(function (el) {
@@ -685,6 +735,10 @@
   function sweepReveals() {
     var vh = window.innerHeight;
     pending = pending.filter(function (el) {
+      /* The headline is sized by measurement once Anton has loaded. Revealing
+         it before that means showing the fallback size and then jumping to the
+         fitted one, so it waits its turn. */
+      if (el === heroStack && heroTitle && !heroTitle.classList.contains('is-fitted')) return true;
       if (el.getBoundingClientRect().top > vh * 0.88) return true;
       el.classList.add('is-in');
       return false;
@@ -698,6 +752,7 @@
   }
 
   if (reduce) {
+    fitHero();
     pending.forEach(function (el) { el.classList.add('is-in'); });
     counters.forEach(runCounter);
     pending = []; counters = [];

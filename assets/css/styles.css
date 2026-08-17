@@ -550,12 +550,22 @@ s { text-decoration-thickness: 1px; }
 .hero__shot {
   position: absolute; z-index: 2;
   top: 50%; left: 50%;
-  width: min(304px, 31vw);
+  width: min(252px, 27vw);
   transform: translate(-50%, -50%);
   animation: drift 12s var(--ease-soft) infinite;
 }
 .hero__shot .shot__pending { display: none; }
-.hero__shot img { filter: drop-shadow(0 30px 60px rgba(0,0,0,0.45)); }
+
+/* The photograph is a rectangle with its own background, and it sits on top of
+   the headline. Feathering it into the page keeps the interlock reading as one
+   composition instead of a pasted screenshot, and lets short words behind it
+   (like "night.") stay legible at the edges. */
+.hero__shot img {
+  border-radius: 0;
+  -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 48%, #000 55%, transparent 78%);
+          mask-image: radial-gradient(ellipse 62% 58% at 50% 48%, #000 55%, transparent 78%);
+  filter: drop-shadow(0 24px 48px rgba(0,0,0,0.55));
+}
 @keyframes drift {
   0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
   50%      { transform: translate(-50%, calc(-50% - 13px)) rotate(-1.4deg); }

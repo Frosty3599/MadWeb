@@ -47,14 +47,6 @@
   }
   $$('[data-shot]').forEach(watchShot);
 
-  function swapShot(fig, src) {
-    var img = $('img', fig);
-    if (!img || img.getAttribute('src') === src) return;
-    fig.classList.remove('is-missing');
-    img.setAttribute('src', src);
-    if (img.complete && img.naturalWidth === 0) fig.classList.add('is-missing');
-  }
-
 
   /* ═══════════  2. THE LAMP / THEME  ═══════════ */
 
@@ -99,7 +91,6 @@
   var cwButtons = $$('[data-cw-btn]');
   var cwName    = $('[data-cw-name]');
   var cwNote    = $('[data-cw-note]');
-  var heroShot  = $('[data-hero-shot]');
 
   function rollText(el, next) {
     if (!el) return;
@@ -123,9 +114,6 @@
     rollText(cwName, data.name);
     if (cwNote) cwNote.textContent = data.note;
     $$('[data-summary-colour]').forEach(function (el) { el.textContent = data.name; });
-
-    /* the hero is part of the configurator, so it follows the choice too */
-    if (heroShot) swapShot(heroShot, 'assets/images/' + key + '.jpg');
   }
 
   cwButtons.forEach(function (btn) {

@@ -69,21 +69,13 @@
       <p class="hero__eyebrow chip">NovaCase — Quicksand Glow Edition</p>
 
       <div class="hero__stack" data-stack>
+        <span class="hero__bloom" aria-hidden="true"></span>
         <h1 class="hero__title">
-          <!-- Only the first line passes behind the shot. Every other word stays
-               in front of it, so the headline reads in full and the interlock
-               still reads as depth rather than a photo dropped on top. -->
-          <span class="hero__line hero__line--back"><i>Glows all</i></span>
-          <span class="hero__line hero__line--front"><i>night.</i></span>
-          <span class="hero__line hero__line--front"><i>Guards all</i></span>
-          <span class="hero__line hero__line--front"><i>day.</i></span>
+          <span class="hero__line"><i>Glows all</i></span>
+          <span class="hero__line"><i>night.</i></span>
+          <span class="hero__line"><i>Guards all</i></span>
+          <span class="hero__line"><i>day.</i></span>
         </h1>
-
-        <figure class="shot hero__shot" data-shot data-hero-shot>
-          <span class="hero__bloom" aria-hidden="true"></span>
-          <img src="assets/images/forest-green.jpg" alt="A NovaCase glow case held in one hand, its liquid core catching the light." width="676" height="596">
-          <figcaption class="shot__pending">Photograph pending</figcaption>
-        </figure>
       </div>
 
       <div class="hero__foot">
@@ -105,32 +97,33 @@
   <!-- ══════════  01 · GLOW — one moment: the switch  ══════════ -->
   <section class="section lights" id="lights" data-section>
     <div class="wrap">
-      <header class="section__head">
-        <p class="label"><span class="num">01</span> The glow</p>
-        <h2 class="h2" data-split>Turn the lights off.</h2>
-        <p class="section__lede">
-          The pigment is strontium aluminate — inorganic, non-radioactive, effectively permanent.
-          Use the switch. The whole page goes with it.
-        </p>
-      </header>
+      <div class="lights__grid">
+        <header class="section__head lights__copy">
+          <p class="label"><span class="num">01</span> The glow</p>
+          <h2 class="h2" data-split>Turn the lights off.</h2>
+          <p class="section__lede">
+            The pigment is strontium aluminate — inorganic, non-radioactive, effectively permanent.
+            Use the switch. The whole page goes with it.
+          </p>
+          <button class="lamp lamp--big" data-lamp type="button" aria-pressed="true" aria-label="Turn the lights on">
+            <span class="lamp__track"><span class="lamp__knob"></span></span>
+            <span class="lamp__text" data-lamp-text>Lights off</span>
+          </button>
+        </header>
 
-      <div class="lights__stage">
-        <span class="lights__glow" aria-hidden="true"></span>
+        <div class="lights__stage">
+          <span class="lights__glow" aria-hidden="true"></span>
 
-        <figure class="shot lights__shot lights__shot--on" data-shot>
-          <img src="assets/images/glow-off.jpg" alt="The case in a lit room — an ordinary deep red finish." width="392" height="352">
-          <figcaption class="shot__pending">Photograph pending</figcaption>
-        </figure>
+          <figure class="shot lights__shot lights__shot--on" data-shot>
+            <img src="assets/images/glow-off.jpg" alt="The case in a lit room — an ordinary deep red finish." width="363" height="382">
+            <figcaption class="shot__pending">Photograph pending</figcaption>
+          </figure>
 
-        <figure class="shot lights__shot lights__shot--off" data-shot>
-          <img src="assets/images/glow-on.jpg" alt="The same case in darkness, burning cyan from within." width="991" height="962">
-          <figcaption class="shot__pending">Photograph pending</figcaption>
-        </figure>
-
-        <button class="lamp lamp--big" data-lamp type="button" aria-pressed="true" aria-label="Turn the lights on">
-          <span class="lamp__track"><span class="lamp__knob"></span></span>
-          <span class="lamp__text" data-lamp-text>Lights off</span>
-        </button>
+          <figure class="shot lights__shot lights__shot--off" data-shot>
+            <img src="assets/images/glow-on.jpg" alt="The same case in darkness, burning cyan from within." width="988" height="963">
+            <figcaption class="shot__pending">Photograph pending</figcaption>
+          </figure>
+        </div>
       </div>
 
       <dl class="claims">

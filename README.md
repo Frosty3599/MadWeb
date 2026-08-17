@@ -1,6 +1,6 @@
-# Quicksand QS·01 — Glow Edition
+# NovaCase NC·01 — Glow Edition
 
-A single-product marketing site for quicksand glow-in-the-dark AirPods cases.
+A single-product storefront for NovaCase quicksand glow-in-the-dark AirPods cases.
 Static HTML, CSS and JavaScript. No build step, no dependencies, no framework.
 
 **Open `index.html` in a browser.** That's the whole setup. It also deploys as-is
@@ -9,7 +9,8 @@ to GitHub Pages or any static host.
 ```
 index.html                  markup and copy
 assets/css/styles.css       design tokens + every section
-assets/js/main.js           motion engine + configurator
+assets/css/fonts.css        Anton / Inter / JetBrains Mono, inlined as data URIs
+assets/js/main.js           motion engine, configurator, bag + checkout
 assets/video/360-airpod.mp4 the 360° spin loop (silent)
 assets/images/              product photography — see below
 ```
@@ -36,15 +37,18 @@ where the case is burning cyan.
 
 ## What's interactive
 
-- **The lamp switch** (nav, glow section, footer — all three stay in sync)
-  flips the entire page between light and dark *and* crossfades the product
-  between the lit photo and the glowing one. The choice persists in
-  `localStorage`; first visit follows the OS `prefers-color-scheme`.
-- **Three colourways** — swaps the shot, the accent colour, and the ambient
-  glow across the whole page.
-- **Four fits** — drives an odometer price roll and updates the nav pill, the
-  ticket, the closing summary, and the three live rows in the specification
-  table.
+- **The lamp switch** (nav and glow section, kept in sync) flips the entire page
+  between light and dark *and* crossfades the product between the lit photo and the
+  glowing one, with a wavefront that leaves from the switch you pressed. The choice
+  persists in `localStorage`; first visit follows the OS `prefers-color-scheme`.
+- **Three colourways** — swaps the colourway stage *and the hero shot*, the accent
+  colour, and the ambient glow across the whole page.
+- **Four fits** — drives an odometer price roll and updates the ticket, the closing
+  summary, and the three live rows in the specification table.
+- **A real bag and checkout** — "Add to bag" adds the configured item, the nav count
+  bumps, quantities step up and down, the summary recomputes subtotal, shipping
+  (free over $25, otherwise $3.99) and total, and the order form validates before
+  confirming with a reference. The bag survives a reload via `localStorage`.
 
 | Fit | Launch | List |
 |---|---|---|
@@ -71,5 +75,9 @@ the page fully usable and fully visible.
 - The 360° video is H.264/AAC and plays muted and looping. Chromium builds
   without proprietary codecs (including Playwright's bundled one) cannot decode
   it; Chrome, Safari, Edge and Firefox all can.
-- Typography uses a system font stack so the page renders identically offline
-  with no external requests.
+- Typography is Anton (display), Inter (body) and JetBrains Mono (utility), inlined
+  as woff2 data URIs — the page makes zero network requests and renders identically
+  offline.
+- The checkout is a demonstration flow: it takes no payment and never collects card
+  details. Wire the "Place order" handler in `main.js` to a real processor before
+  using it commercially.

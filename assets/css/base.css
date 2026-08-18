@@ -376,9 +376,15 @@ a { color: inherit; }
   transform-origin: 0 50%;
 }
 
+/* Every control in the bar clears 44px on its short axis. They were 23-41px
+   tall — fine to click, awkward to hit with a thumb, and the bar is the only
+   chrome on the page that a phone user has to operate while scrolling. Height
+   only: the bar has 10px of spare width at 320px and widening anything would
+   spend it. */
 .nav__brand {
   display: flex;
   align-items: center;
+  min-height: 44px;
   gap: 9px;
   text-decoration: none;
   color: var(--ink);
@@ -387,12 +393,22 @@ a { color: inherit; }
 }
 .nav__brand .mark { width: 17px; height: 17px; fill: var(--accent); }
 
+/* Padding carries the spacing here too. "Fit" is three characters — 16px of
+   text — so gap-based spacing left it as a 16px-wide target between two much
+   larger ones. The negative start margin keeps the first label optically
+   aligned with the wordmark despite the padding. */
 .nav__links {
   display: flex;
-  gap: 18px;
-  margin-inline-start: 8px;
+  gap: 0;
+  margin-inline-start: -4px;
 }
 .nav__links a {
+  display: inline-flex;
+  align-items: center;
+  /* These only appear from 900px up, which includes every tablet — so they are
+     touch targets too, not just cursor targets. */
+  min-height: 44px;
+  padding-inline: 12px;
   font-size: var(--fs-small);
   color: var(--ink-3);
   text-decoration: none;
@@ -415,6 +431,7 @@ a { color: inherit; }
 .lamp {
   display: inline-flex;
   align-items: center;
+  min-height: 44px;
   gap: 9px;
   background: none;
   border: 1px solid var(--hairline);
@@ -452,6 +469,7 @@ a { color: inherit; }
 .bag {
   display: inline-flex;
   align-items: center;
+  min-height: 44px;
   gap: 8px;
   border: 1px solid transparent;
   background: var(--accent);
@@ -512,8 +530,21 @@ a { color: inherit; }
   justify-content: space-between;
 }
 .footer__note { font-size: var(--fs-small); color: var(--ink-3); max-width: 38ch; }
-.footer__links { display: flex; flex-wrap: wrap; gap: 18px; }
-.footer__links a { font-size: var(--fs-small); color: var(--ink-3); text-decoration: none; }
+/* Padding rather than gap carries the spacing, so a short label like "FAQ" is
+   still a 40px-wide target instead of a 28px one. The negative margin keeps the
+   row's outer edges flush with the column despite the added padding. */
+.footer__links { display: flex; flex-wrap: wrap; gap: 0 6px; margin-inline: -8px; }
+/* Padded to a 44px hit area rather than the 23px the text alone gave. The row
+   gap absorbs the extra height, so nothing below moves. */
+.footer__links a {
+  font-size: var(--fs-small);
+  color: var(--ink-3);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 8px;
+}
 .footer__links a:hover { color: var(--ink); }
 
 

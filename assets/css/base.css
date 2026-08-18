@@ -307,7 +307,13 @@ a { color: inherit; }
    symmetry it wants. The cost is real and deliberate: roughly half a viewport
    of the space above these two headings comes back. */
 .section[data-scrub] {
-  min-height: 100svh;
+  /* 90svh, not 100. A pinned section still has to cover the screen so its
+     timeline never plays against a strip of the next one, and 90 of the
+     visible viewport does that — the pin holds it in place, so the last tenth
+     was only ever there to be split as empty space above and below the centred
+     content. Trimming it takes ~45px off the run-up to each heading without
+     stranding the diagram at the top of the screen. */
+  min-height: 90svh;
   display: grid;
   align-content: center;
   padding-top: calc(var(--gap-section) + var(--nav-h));

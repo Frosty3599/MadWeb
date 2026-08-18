@@ -258,7 +258,8 @@
 #fit        { padding-top: var(--gap-tight); padding-bottom: var(--gap-wide); }
 
 #specification { padding-block: var(--gap-wide); }
-#faq           { padding-top: var(--gap-wide); }
+#faq           { padding-block: var(--gap-wide); }
+#closer        { padding-top: var(--gap-wide); }
 
 
 /* ══ 01 · Colourways — the one grid on the page ═══════════════════════════ */
@@ -430,7 +431,10 @@
 .fit__grid { display: grid; gap: var(--gap-block); align-items: start; }
 .fit__copy { display: grid; gap: 16px; }
 
-.fits { display: grid; gap: 8px; max-width: 46ch; }
+/* The heading has to land before the choices start. At the copy column's own
+   gap the four rows read as a continuation of the sentence rather than the
+   thing it introduces. */
+.fits { display: grid; gap: 8px; max-width: 46ch; margin-top: 28px; }
 .fits__item {
   display: flex;
   align-items: baseline;
@@ -453,6 +457,11 @@
 .ticket {
   display: grid;
   gap: 12px;
+  /* Dropped down its column so its top edge sits with the fit rows rather than
+     with the heading above them — the ticket answers the choice, so it should
+     not start before the choice does. Desktop only; stacked, it follows the
+     rows anyway. */
+  margin-top: 0;
   justify-items: start;
   padding: 26px;
   border: 1px solid var(--hairline-2);
@@ -477,10 +486,19 @@
 
 @media (min-width: 900px) {
   .fit__grid { grid-template-columns: 1fr 360px; gap: 48px; }
+  /* 145px lands the ticket's top edge on the first fit row. Measured against
+     the rendered column rather than derived — the heading above it is fluid
+     type, so there is no arithmetic that stays true across widths, and this is
+     the value that reads level at the sizes the layout actually uses. */
+  .ticket { margin-top: 145px; }
 }
 
 
 /* ══ 05 · Specification ═══════════════════════════════════════════════════ */
+
+/* This section is a heading followed by a dense block of data. At the shared
+   block gap the two collide; the heading needs to finish first. */
+.spec .section__head { margin-bottom: 48px; }
 
 .features {
   list-style: none;

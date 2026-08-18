@@ -93,13 +93,56 @@ function clock() {
   const el = document.querySelector('[data-clock]');
   if (!el) return;
 
+  /* The visitor's own zone, named. A bare 05:13 could be anywhere and reads as
+     decoration; "05:13 TORONTO" is visibly their clock, which is the point of
+     putting one in the bar at all. */
+  /* Browsers still report the tz database's historical spellings, and printing
+     those back at the people who live there is worse than printing nothing —
+     Chrome answers Asia/Calcutta for a clock set to Kolkata. Only the renamed
+     cities need listing; everything else is already current. */
+  const RENAMED = {
+    Calcutta: 'Kolkata',
+    Saigon: 'Ho Chi Minh City',
+    Rangoon: 'Yangon',
+    Kiev: 'Kyiv',
+    Katmandu: 'Kathmandu',
+    Ulan_Bator: 'Ulaanbaatar',
+    Asmera: 'Asmara',
+    Faeroe: 'Faroe',
+  };
+
+  const zone = () => {
+    let tz = '';
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { /* older engine */ }
+    if (!tz) return '';
+    /* "America/Argentina/Buenos_Aires" -> "BUENOS AIRES". The last segment is
+       the city; the region prefix is the part nobody says out loud. */
+    const last = tz.split('/').pop();
+    return (RENAMED[last] || last).replace(/_/g, ' ').toUpperCase();
+  };
+
+  /* Formatter built once. Rebuilding it every minute is measurable work for a
+     string that changes shape only when the visitor's locale does. */
+  let fmt;
+  try {
+    fmt = new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {
+    fmt = null;
+  }
+
+  const place = zone();
+
   const write = () => {
     const now = new Date();
-    el.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const time = fmt ? fmt.format(now) : now.toTimeString().slice(0, 5);
+    el.textContent = place ? `${time} · ${place}` : time;
     el.dateTime = now.toISOString();
+    el.setAttribute('aria-label', place ? `Local time in ${place}: ${time}` : `Local time: ${time}`);
   };
 
   write();
+  /* Align to the top of the minute, then tick once a minute — a seconds
+     readout in a nav pill repaints sixty times more often to say nothing. */
   setTimeout(() => { write(); setInterval(write, 60000); }, (60 - new Date().getSeconds()) * 1000);
 }
 

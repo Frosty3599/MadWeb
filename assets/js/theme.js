@@ -26,6 +26,9 @@ export function mount() {
   const root = document.documentElement;
   const switches = [...document.querySelectorAll('[data-lamp]')];
   const wave = document.querySelector('[data-wavefront]');
+  /* Lived in the glow section, which no longer exists. Kept null-safe rather
+     than assumed absent: if a glow shot is ever put back on the page under the
+     same hooks, the lamp picks it up again with no change here. */
   const cap = document.querySelector('[data-glow-cap]');
 
   /* Preload the state we are not in, so the crossfade has something to fade

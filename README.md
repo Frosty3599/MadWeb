@@ -3,11 +3,18 @@
 A single-product storefront for the NovaCase quicksand glow-in-the-dark AirPods case.
 Static HTML, CSS and JavaScript with two vendored libraries. No build step, no framework.
 
-**Open `index.html` in a browser**, or serve the folder:
+## Running it
+
+The page loads its JavaScript as ES modules, and browsers refuse to load those
+over `file://` — so **double-clicking `index.html` will not work**. It paints, but
+nothing is interactive. Serve the folder over HTTP instead:
 
 ```
-python3 -m http.server 8000
+python3 -m http.server 8000     # then open http://localhost:8000
 ```
+
+Any static server does: `npx serve`, `php -S localhost:8000`, VS Code's Live Server.
+Deployed on any static host it just works — the restriction is `file://` only.
 
 ```
 index.html                       markup and copy, one page

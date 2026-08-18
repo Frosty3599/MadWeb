@@ -215,7 +215,11 @@ a { color: inherit; }
 
 .frame {
   position: relative;
-  width: var(--frame);
+  /* Never wider than the column it sits in. As a flat `var(--frame)` the
+     420px colourway frames outgrew their ~397px grid tracks and spilled over
+     their neighbours, so the selected card's outline crossed the card beside
+     it. */
+  width: min(var(--frame), 100%);
   aspect-ratio: 1;
   margin: 0;
   border-radius: var(--r-frame);

@@ -244,41 +244,33 @@
 }
 
 
-/* ══ 01 · Glow — a band, not a screen ═════════════════════════════════════ */
+/* ══ Section rhythm ═══════════════════════════════════════════════════════
+   The gap between two sections is the sum of the padding either side of the
+   boundary, so it is set per boundary here rather than left to one uniform
+   value. The top of the page runs almost flush — hero straight through
+   colourways, build, charge and fit, as one continuous argument — while
+   specification and the FAQ get real air, because a spec table and a list of
+   objections want to be read rather than scrolled past. */
 
-.glow__inner {
-  display: grid;
-  gap: var(--gap-block);
-  align-items: center;
-}
-.glow__copy { display: grid; gap: 12px; justify-items: start; }
-.glow__lede { max-width: 30ch; }
-.glow__lamp { align-self: start; }
-/* Capped against the viewport as well as in pixels. The bloom behind a frame
-   sits 6% outside it, so a 380px frame on a 390px phone pushed a pixel of
-   horizontal scroll onto the page. */
-.glow__frame { --frame: min(380px, 78vw); }
+.hero { padding-bottom: var(--gap-tight); }
 
-@media (min-width: 760px) {
-  /* Both columns sized to their content and packed to the left, rather than a
-     1fr text column shoving the shot against the right margin. The case now
-     sits beside the sentence it belongs to — at this size the two read as one
-     object, which is the whole point of a section about looking at it. */
-  .glow__inner {
-    grid-template-columns: minmax(0, 34ch) auto;
-    justify-content: start;
-    column-gap: clamp(20px, 4vw, 56px);
-    min-height: 40vh;
-  }
-}
+#colourways { padding-block: var(--gap-tight); }
+#fit        { padding-top: var(--gap-tight); padding-bottom: var(--gap-wide); }
+
+#specification { padding-block: var(--gap-wide); }
+#faq           { padding-top: var(--gap-wide); }
 
 
-/* ══ 02 · Colourways — the one grid on the page ═══════════════════════════ */
+/* ══ 01 · Colourways — the one grid on the page ═══════════════════════════ */
 
 /* Three equal tracks that always add up to the row — no auto-fit, because
    auto-fit sized tracks independently of the frames inside them and the two
    disagreed. Each card is bounded by its own track and can never reach its
    neighbour. */
+/* The heading has to finish before the row of choices starts — at the shared
+   block gap the three cards read as part of the sentence above them. */
+.colourways .section__head { margin-bottom: 40px; }
+
 .cw {
   --frame: 300px;
   display: grid;
@@ -324,7 +316,7 @@
 .cw__code { color: var(--ink-3); }
 
 
-/* ══ 03 · Inside the shell ════════════════════════════════════════════════ */
+/* ══ 02 · Inside the shell ════════════════════════════════════════════════ */
 
 .build__grid { display: grid; gap: var(--gap-block); align-items: center; }
 .build__copy { display: grid; gap: 16px; }
@@ -389,7 +381,7 @@
 }
 
 
-/* ══ 04 · The charge ══════════════════════════════════════════════════════ */
+/* ══ 03 · The charge ══════════════════════════════════════════════════════ */
 
 .science__grid { display: grid; gap: var(--gap-block); align-items: center; }
 .science__copy { display: grid; gap: 16px; }
@@ -433,7 +425,7 @@
 }
 
 
-/* ══ 05 · Fit and price ═══════════════════════════════════════════════════ */
+/* ══ 04 · Fit and price ═══════════════════════════════════════════════════ */
 
 .fit__grid { display: grid; gap: var(--gap-block); align-items: start; }
 .fit__copy { display: grid; gap: 16px; }
@@ -488,7 +480,7 @@
 }
 
 
-/* ══ 06 · Specification ═══════════════════════════════════════════════════ */
+/* ══ 05 · Specification ═══════════════════════════════════════════════════ */
 
 .features {
   list-style: none;
@@ -568,7 +560,7 @@
 }
 
 
-/* ══ 07 · Reviews ═════════════════════════════════════════════════════════ */
+/* ══ Reviews ═════════════════════════════════════════════════════════ */
 
 .reviews__grid {
   display: grid;
@@ -579,7 +571,7 @@
 .review cite { font-style: normal; }
 
 
-/* ══ 08 · FAQ ═════════════════════════════════════════════════════════════ */
+/* ══ 06 · FAQ ═════════════════════════════════════════════════════════════ */
 
 .faq__grid { display: grid; gap: var(--gap-block); align-items: start; }
 .faq__list { display: grid; }
@@ -620,7 +612,22 @@
 }
 
 
-/* ══ 09 · Closer ══════════════════════════════════════════════════════════ */
+/* Any container marked data-stagger-in brings its children in one after
+   another. One rule reused by the closer and the footer rather than a bespoke
+   entrance written per section. */
+[data-stagger-in] > * {
+  opacity: 0;
+  transform: translateY(16px);
+}
+[data-stagger-in].is-in > * {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--t-base) var(--ease-out) var(--d, 0ms),
+              transform var(--t-base) var(--ease-out) var(--d, 0ms);
+}
+
+
+/* ══ Closer ══════════════════════════════════════════════════════════ */
 
 .closer { position: relative; overflow: hidden; }
 .closer__inner { display: grid; gap: 18px; justify-items: start; padding-block: var(--gap-block); }

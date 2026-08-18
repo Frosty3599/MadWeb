@@ -19,7 +19,6 @@ export function mount() {
   });
 
   reviews();
-  glow();
   build();
   science();
   fit();
@@ -33,11 +32,31 @@ export function mount() {
     revealHeading(h);
   });
 
+  grouped();
   reveal(document);
 }
 
 
-/* 07 — off unless someone has explicitly turned it on. The quotes in the
+/* Containers that bring their own children in. Delays are written as an inline
+   custom property so a section can gain or lose a child without touching CSS. */
+function grouped() {
+  document.querySelectorAll('[data-stagger-in]').forEach((group) => {
+    const kids = [...group.children];
+    kids.forEach((el, i) => el.style.setProperty('--d', `${i * 80}ms`));
+
+    if (reduced) { group.classList.add('is-in'); return; }
+
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      group.classList.add('is-in');
+      io.disconnect();
+    }, { threshold: 0.2 });
+    io.observe(group);
+  });
+}
+
+
+/* Reviews — off unless someone has explicitly turned it on. The quotes in the
    markup are labelled sample copy; publishing invented reviews on a live
    storefront is dishonest and, in most jurisdictions, unlawful. Set
    data-reviews="on" on <html> once they are real. */
@@ -48,16 +67,7 @@ function reviews() {
 }
 
 
-/* 01 — the glow section is a band with no timeline of its own. Its gesture is
-   the switch, which theme.js owns. All it needs is an entrance. */
-function glow() {
-  const el = document.getElementById('glow');
-  if (!el) return;
-  el.querySelectorAll('.glow__frame, .glow__copy').forEach((n) => n.setAttribute('data-reveal', ''));
-}
-
-
-/* 03 — the cross-section separates and labels itself across the pin. Without
+/* 02 — the cross-section separates and labels itself across the pin. Without
    a pin (mobile, reduced motion) it paints the separated, fully-labelled
    state immediately, because that is the state that actually explains the
    product. */
@@ -101,7 +111,7 @@ function setActive(steps, i) {
 }
 
 
-/* 04 — the decay curve draws itself and the readout counts down with it. */
+/* 03 — the decay curve draws itself and the readout counts down with it. */
 function science() {
   const el = document.getElementById('science');
   const path = el?.querySelector('[data-curve-path]');
@@ -167,7 +177,7 @@ function science() {
 }
 
 
-/* 05 — the four fits arrive in sequence, then the ticket. Staggered by an
+/* 04 — the four fits arrive in sequence, then the ticket. Staggered by an
    inline custom property rather than nth-child rules, so adding or removing a
    fit needs no CSS change. */
 function fit() {
@@ -191,7 +201,7 @@ function fit() {
 }
 
 
-/* 06 — the video column is sticky in CSS, so all this does is stagger the
+/* 05 — the video column is sticky in CSS, so all this does is stagger the
    rows past it and keep the video from playing to nobody. */
 function spec() {
   const el = document.getElementById('specification');
@@ -209,7 +219,7 @@ function spec() {
 }
 
 
-/* 08 — only one answer open at a time. A stack of open answers turns the
+/* 06 — only one answer open at a time. A stack of open answers turns the
    section back into the wall of text it exists to avoid. */
 function faq() {
   const list = document.querySelector('.faq__list');

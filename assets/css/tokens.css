@@ -53,9 +53,16 @@
      Minimal and uniform. 64px between sections everywhere, 40px below 768px —
      no section gets a special gap, which is what makes the rhythm read as
      deliberate rather than arbitrary. */
-  --gap-section: 32px;
+  --gap-section: 24px;
   --gap-block:   18px;
   --gap-item:    10px;
+
+  /* Section spacing is no longer uniform. The top of the page runs as one
+     continuous argument — hero straight through colourways, build, charge and
+     fit — while the reference half below it (specification, FAQ) is set apart
+     so it reads as a different kind of material. */
+  --gap-tight: 8px;
+  --gap-wide:  72px;
   --gutter:      clamp(1.25rem, 4vw, 3rem);
   --page:        1280px;
 
@@ -125,6 +132,8 @@
   :root {
     --gap-section: 22px;
     --gap-block:   16px;
+    --gap-tight:   6px;
+    --gap-wide:    44px;
     --frame:       min(300px, 76vw);
   }
 }

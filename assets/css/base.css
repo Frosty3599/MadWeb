@@ -298,16 +298,25 @@ a { color: inherit; }
    scrubbed sections also take a full viewport, because a short pinned section
    leaves a lake of empty black under its content while the timeline plays. */
 .section[data-scrub] {
-  min-height: 100svh;
+  /* A pinned section has to fill the screen, or its timeline plays against a
+     strip of whatever comes next. But centring the content inside that height
+     put half the leftover space *above* the heading — which is what the gap
+     between these sections was actually made of, and no amount of trimming
+     padding would have touched it. Content starts at the top instead; the
+     remaining space falls below it, inside the pinned frame, where it reads as
+     the section's own breathing room rather than a gap between two sections. */
+  min-height: 84svh;
   display: grid;
-  align-content: center;
-  padding-top: calc(var(--gap-section) + var(--nav-h));
+  align-content: start;
+  /* Just enough to clear the floating bar, whose lower edge sits at ~70px. */
+  padding-top: calc(var(--nav-h) - 10px);
+  padding-bottom: var(--gap-tight);
 }
 
 @media (max-width: 900px) {
   /* Nothing pins down here, so the viewport height and the nav clearance are
      both dead weight. */
-  .section[data-scrub] { min-height: 0; padding-top: var(--gap-section); }
+  .section[data-scrub] { min-height: 0; padding-top: var(--gap-section); padding-bottom: var(--gap-section); }
 }
 
 .section__head { margin-bottom: var(--gap-block); }

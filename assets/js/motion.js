@@ -18,7 +18,11 @@ export const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').mat
 /* Pinned scrubbing is a desktop affordance. On a phone it fights the browser's
    own scroll handling and the address-bar resize, so the same content lands as
    plain stacked reveals instead. */
-export const canPin = window.matchMedia('(min-width: 901px)').matches && !reduced;
+/* Wide enough to lay out in two columns, and tall enough to actually hold a
+   pinned section. Without the height floor a 1280x600 laptop pins a section
+   taller than its own screen, so the bottom of the diagram is below the fold
+   for the entire scrub and the reader never sees it. */
+export const canPin = window.matchMedia('(min-width: 901px) and (min-height: 700px)').matches && !reduced;
 
 let lenis = null;
 

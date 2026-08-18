@@ -1,55 +1,47 @@
 # NovaCase NC·01 — Glow Edition
 
-A single-product storefront for NovaCase quicksand glow-in-the-dark AirPods cases.
-Static HTML, CSS and JavaScript. No build step, no dependencies, no framework.
+A single-product storefront for the NovaCase quicksand glow-in-the-dark AirPods case.
+Static HTML, CSS and JavaScript with two vendored libraries. No build step, no framework.
 
-**Open `index.html` in a browser.** That's the whole setup. It also deploys as-is
-to GitHub Pages or any static host.
+**Open `index.html` in a browser**, or serve the folder:
 
 ```
-index.html                  markup and copy
-api/create-checkout-session.js  Stripe Checkout session (server-side pricing)
-assets/css/styles.css       design tokens + every section
-assets/css/fonts.css        Anton / Inter / JetBrains Mono, inlined as data URIs
-assets/js/main.js           motion engine, configurator, bag + checkout
-assets/video/360-airpod.mp4 the 360° spin loop (silent)
-assets/images/              product photography — see below
+python3 -m http.server 8000
 ```
 
-## Dropping in the photographs
-
-The five product shots are **not committed yet**. Until they are, every shot
-falls back to a CSS-drawn stand-in in that colourway's own tones, so the layout
-is complete and nothing shifts.
-
-Commit files with exactly these names and they appear automatically — there is
-no code to change:
-
-| File | What it shows |
-|---|---|
-| `assets/images/forest-green.jpg` | Forest Green colourway |
-| `assets/images/amber-red.jpg` | Amber Red colourway |
-| `assets/images/midnight-blue.jpg` | Midnight Blue colourway |
-| `assets/images/glow-off.jpg` | The case in a **lit** room — lights-on state |
-| `assets/images/glow-on.jpg` | The case **glowing in the dark** — lights-off state |
-
-The last two are named for the glow, not the room: `glow-on.jpg` is the shot
-where the case is burning cyan.
+```
+index.html                       markup and copy, one page
+assets/css/tokens.css            palette, type scale, spacing, easing — every value the rest uses
+assets/css/base.css              reset, typography, frames, buttons, nav, footer
+assets/css/sections.css          one block per section, in page order
+assets/css/fonts.css             Inter Variable, JetBrains Mono, Instrument Serif Italic
+assets/js/main.js                entry — boots motion, picks a hero, mounts the modules
+assets/js/motion.js              Lenis + ScrollTrigger, reduced-motion switch, shared primitives
+assets/js/hero-*.js              three interchangeable hero devices
+assets/js/theme.js               the lamp, and the page-wide crossfade it fires
+assets/js/configurator.js        colourways, fits, price odometer, live spec rows
+assets/js/bag.js                 email gate, price unlock, drawer, Stripe handoff
+assets/js/sections.js            section registry — order, nav links, per-section motion
+assets/js/vendor/                GSAP 3.12.5, ScrollTrigger, Lenis 1.1.18 — pinned, not from a CDN
+api/create-checkout-session.js   Stripe Checkout session, server-side pricing
+```
 
 ## What's interactive
 
-- **The lamp switch** (nav and glow section, kept in sync) flips the entire page
-  between light and dark *and* crossfades the product between the lit photo and the
-  glowing one, with a wavefront that leaves from the switch you pressed. The choice
-  persists in `localStorage`; first visit follows the OS `prefers-color-scheme`.
-- **Three colourways** — swaps the colourway stage *and the hero shot*, the accent
-  colour, and the ambient glow across the whole page.
-- **Four fits** — drives an odometer price roll and updates the ticket, the closing
-  summary, and the three live rows in the specification table.
-- **A real bag and checkout** — "Add to bag" adds the configured item, the nav count
-  bumps, quantities step up and down, the summary recomputes subtotal, shipping
-  (free over $25, otherwise $3.99) and total, and the order form validates before
-  confirming with a reference. The bag survives a reload via `localStorage`.
+- **The lamp** (in the nav and in the glow section, kept in sync) flips the whole page between
+  lights-off and lights-on, crossfades every product shot at once, and sends a wavefront out from
+  whichever switch you actually pressed. The choice persists; **the first visit is always dark**,
+  whatever the OS prefers, because the product only exists in the dark.
+- **Three colourways** move `--tone` across the entire page and re-tint a fifth of the hero
+  particles.
+- **Four fits** drive the price odometer, the ticket, the closing summary and the three live rows
+  in the specification table.
+- **The email gate.** Every price shows the list figure struck through with the launch price masked
+  as `$--.--`. The first *Add to bag* asks for an address; giving one rolls every masked price down
+  to its real figure and remembers it. Browsing is never blocked — only the price reveal and
+  checkout.
+- **A real bag** — slide-out drawer, quantity steppers capped at 10, free shipping over $25 else
+  $3.99 flat, focus-trapped, Esc to close, surviving a reload.
 
 | Fit | Launch | List |
 |---|---|---|
@@ -60,79 +52,143 @@ where the case is burning cyan.
 
 ## Motion
 
-Three shared primitives drive everything: one rAF scroll loop that writes
-`--page-progress` and `--sec-progress` for CSS to consume, one geometry sweep
-that releases reveals, and one text splitter for the line-rise headlines.
+Four primitives in `motion.js` — `reveal`, `splitLines`, `scrub`, `countTo` — and one shared set of
+easing tokens, so nothing on the page moves to its own private curve. Entrances decelerate;
+reversible states use the same curve in both directions; only the scroll-driven timelines are
+linear, because there the easing is the reader's own scrolling.
 
-Each section gets **one** choreographed gesture rather than animating
-everything at once — the hero interlock, the switch, the crossfade, the price
-roll, the spec cascade, the counters.
+Each section gets **one** choreographed gesture rather than animating everything at once: the
+constellation, the switch, the colourway retint, the exploding cross-section, the drawing decay
+curve, the price roll, the spec cascade.
 
-Every animation collapses under `prefers-reduced-motion: reduce`, which leaves
-the page fully usable and fully visible.
+Everything collapses under `prefers-reduced-motion: reduce` — the poster hero replaces the
+constellation, nothing pins, Lenis is never constructed, and the page is fully visible and usable.
+
+### Swapping the hero
+
+Three hero devices are built. Change one attribute on `<html>`:
+
+```html
+<html data-hero="constellation">   <!-- default: particles sampled from the case cut-out -->
+<html data-hero="poster">          <!-- type and product interlocked, no pinning -->
+<html data-hero="darkroom">        <!-- pinned: the room lights come up as you scroll -->
+```
+
+The page falls back to `poster` on its own under reduced motion, on a coarse pointer below 640px,
+on two cores or fewer, and if the constellation cannot read its source image.
+
+### Removing or reordering a section
+
+Delete the `<section>` from `index.html`. Its motion, its logic and its nav link go with it —
+`sections.js` registers by id and every module queries null-safely, so nothing else needs editing.
+Reordering is just moving the block.
+
+## Photographs
+
+Every shot sits in an identical **420 × 420** frame, `object-fit: contain`, with the same padding,
+bloom and caption position in every section — which is what makes five source files of five
+different shapes line up. Nothing is ever displayed above its native size.
+
+Any file that is missing is replaced in place by a tile drawn in that colourway's own tones, at
+exactly the frame's size, so the layout is complete and **nothing shifts when the real file lands**.
+
+| Path | What it shows | Target size |
+|---|---|---|
+| `assets/images/forest-green.jpg` | Forest Green colourway, lit | 840×840 |
+| `assets/images/amber-red.jpg` | Amber Red colourway, lit | 840×840 |
+| `assets/images/midnight-blue.jpg` | Midnight Blue colourway, lit | 840×840 |
+| `assets/images/glow-off.jpg` | The case in a **lit** room — the lights-on state | 840×840 |
+| `assets/images/glow-on.jpg` | The case **glowing in the dark** — the lights-off state | 840×840 |
+| `assets/images/hero-case.webp` | Cut-out case on transparency — the particle source | 1000×1000 |
+
+The last two are named for the glow, not the room: `glow-on.jpg` is the shot where the case is
+burning cyan.
+
+**To add or replace one:** put the file in `assets/images/` under exactly the filename above and
+reload. There is no code to change. Square or near-square, 840px or larger (they render at 420, so
+2× keeps them crisp), JPEG under ~200 KB — or WebP/PNG with a real alpha channel for `hero-case`,
+which the constellation samples for its silhouette.
+
+Everything else on the page is hand-drawn vector and needs no upload: the four-layer cross-section,
+the decay curve, the feature icons, the wordmark, the favicon and the Open Graph card.
+
+## Weight
+
+Measured on the built page, gzipped as a real host would serve it:
+
+| | |
+|---|---|
+| HTML, CSS and JS (incl. GSAP + Lenis) | 88 KB |
+| Fonts, three faces | 110 KB |
+| Photographs | 205 KB |
+| **Initial view** | **404 KB** |
+| 360° video, loaded only when the spec section is reached | 138 KB |
+| **Whole page** | **543 KB** |
+
+First contentful paint 140 ms locally; no long tasks over 50 ms while scrolling the pinned sections.
 
 ## Turning on Stripe
 
-The storefront ships in **demonstration mode**: the bag and checkout work
-end to end, but no payment is taken and no card details are collected.
+The storefront ships in **demonstration mode**: the bag and checkout work end to end, but no payment
+is taken and no card details are collected.
 
-Stripe cannot be driven from a static page — a secret key in the browser is a
-secret given away. So payment goes through one small server function that
-prices the bag, creates a Checkout Session and hands back a URL to redirect
-to. The site itself stays static and holds no key.
+Stripe cannot be driven from a static page — a secret key in the browser is a secret given away — so
+payment goes through one small server function that prices the bag, creates a Checkout Session and
+returns a URL to redirect to. The page itself stays static and holds no key.
 
-1. **Deploy the function.** `api/create-checkout-session.js` is a standard
-   Node serverless handler. On Vercel the path works as-is. On Netlify move it
-   to `netlify/functions/create-checkout-session.js`; on Cloudflare Workers
-   wrap it in a `fetch` handler. Run `npm install` so `stripe` is available.
+1. **Deploy the function.** `api/create-checkout-session.js` is a standard Node serverless handler.
+   On Vercel the path works as-is. On Netlify move it to
+   `netlify/functions/create-checkout-session.js`. Run `npm install` so `stripe` is available.
 
-2. **Set two environment variables** on the host:
+2. **Set two environment variables:** `STRIPE_SECRET_KEY` (`sk_test_…` or `sk_live_…`) and
+   `SITE_URL` (`https://your-domain.example`, used for the return links).
 
-   | Variable | Value |
-   |---|---|
-   | `STRIPE_SECRET_KEY` | `sk_test_…` while testing, `sk_live_…` in production |
-   | `SITE_URL` | `https://your-domain.example` — used for the return links |
-
-3. **Point the page at it.** In `assets/js/main.js`, set the endpoint:
+3. **Point the page at it.** In `assets/js/bag.js`:
 
    ```js
-   var PAYMENTS = { endpoint: '/api/create-checkout-session' };
+   const PAYMENTS = { endpoint: '/api/create-checkout-session' };
    ```
 
    The button changes from "Place order" to "Pay with card" on its own.
 
 4. **Test** with Stripe's `4242 4242 4242 4242`, any future expiry, any CVC.
 
+GitHub Pages will serve everything here except that function, so checkout stays in demonstration
+mode there permanently.
+
 ### What the server decides, not the browser
 
-The page sends only a fit key, a colourway and a quantity. Prices live in the
-function's own `CATALOGUE` and nowhere else, so a tampered client cannot
-invent a cheaper case — this is covered by a test that sends `price: 0.01`
-and confirms the session is still built at $19.99. Quantities are bounded,
-unknown fits and colourways are rejected, and Stripe errors are logged
-server-side rather than returned to the browser.
+The page sends only a fit key, a colourway and a quantity. Prices live in the function's own
+`CATALOGUE` and nowhere else, so a tampered client cannot invent a cheaper case. Quantities are
+bounded, unknown fits and colourways are rejected, and Stripe errors are logged server-side rather
+than returned to the browser.
 
-Change a price in **both** places: the `data-price` attribute in `index.html`
-(what the shopper sees) and `CATALOGUE` in the function (what they are
-charged). They are deliberately separate — the browser copy is never trusted.
+Change a price in **both** places: the `data-price` attribute in `index.html` (what the shopper
+sees) and `CATALOGUE` in the function (what they are charged). They are deliberately separate — the
+browser's copy is never trusted.
 
-## Signing in
+## About the email
 
-Pressing **Add to bag** asks for an email before the first item goes in. The
-address is stored in `localStorage`, shown in the nav, prefilled into
-checkout, and passed to Stripe so the receipt goes to the right place.
+Pressing **Add to bag** asks for an address before the first item goes in. It is stored in
+`localStorage`, shown in the nav, prefilled into checkout and passed to Stripe so the receipt lands
+in the right place.
 
-This is identity capture, not authenticated login: with no backend there is
-nobody to verify the address against and no password or magic link involved.
-Treat it as "where should we email this", not as proof of who someone is. If
-you need real accounts, that needs a backend and a session store.
+This is identity capture, **not authentication**. With no backend there is nobody to verify the
+address against, and no password or magic link is involved. Treat it as "where should we email
+this", never as proof of who someone is. Real accounts need a backend and a session store.
 
-## Notes
+---
 
-- The 360° video is H.264, muted and looping, with the audio track stripped —
-  466 KB down to 138 KB at SSIM 0.991 against the original.
-- Typography is Anton (display), Inter (body) and JetBrains Mono (utility),
-  inlined as woff2 data URIs — the page makes zero network requests and
-  renders identically offline.
-- The specification figures are drafted placeholders. Check them against the
-  real product before publishing.
+## ⚠ Before this page sells anything
+
+Several things here are drafted, not verified. Each is marked `TODO` in the source.
+
+- **Every specification figure** — 1.8 mm wall, 505 nm peak, 1.5 m drop rating, weights and
+  dimensions per fit. These were drafted to give the table real shape. Check them against the actual
+  product.
+- **The ten-minutes-to-six-hours claim** that section 04 is built around.
+- **FAQ answers, shipping and returns copy** — realistic drafts, not commitments you have made.
+- **Contact address and social links** in the footer are `TODO` tokens, not real accounts.
+- **The reviews section is switched off** and its quotes are labelled sample copy. Publishing
+  invented reviews is dishonest and, in most jurisdictions, unlawful. Replace them with real ones,
+  then set `data-reviews="on"` on `<html>`.

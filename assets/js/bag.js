@@ -78,7 +78,7 @@ function gate() {
     showAccount(value);
 
     if (pendingAdd) { pendingAdd = false; add(); }
-    toast('Launch price unlocked');
+    toast('Email saved');
   });
 }
 

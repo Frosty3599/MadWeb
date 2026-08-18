@@ -53,9 +53,9 @@
      Minimal and uniform. 64px between sections everywhere, 40px below 768px —
      no section gets a special gap, which is what makes the rhythm read as
      deliberate rather than arbitrary. */
-  --gap-section: 64px;
-  --gap-block:   24px;
-  --gap-item:    12px;
+  --gap-section: 32px;
+  --gap-block:   18px;
+  --gap-item:    10px;
   --gutter:      clamp(1.25rem, 4vw, 3rem);
   --page:        1280px;
 
@@ -123,8 +123,8 @@
 
 @media (max-width: 768px) {
   :root {
-    --gap-section: 40px;
-    --gap-block:   20px;
-    --frame:       min(320px, 78vw);
+    --gap-section: 22px;
+    --gap-block:   16px;
+    --frame:       min(300px, 76vw);
   }
 }

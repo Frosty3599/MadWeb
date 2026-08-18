@@ -6,7 +6,7 @@
    charged; these figures exist to be looked at, never to be trusted.
    ─────────────────────────────────────────────────────────────────────────── */
 
-import { countTo, reduced } from './motion.js';
+import { countTo } from './motion.js';
 
 export const COLOURS = {
   'forest-green': 'Forest Green',
@@ -64,10 +64,6 @@ export function mount() {
   arrowKeys(cwButtons, (b) => setColour(b.dataset.cw, cwButtons));
   arrowKeys(fitButtons, (b) => setFit(b.dataset.fitBtn, fitButtons));
 
-  /* Unlocking the price is the bag's business, but the odometer is ours. */
-  new MutationObserver(() => paintPrice())
-    .observe(root, { attributes: true, attributeFilter: ['data-unlocked'] });
-
   emit();
 }
 
@@ -102,27 +98,16 @@ function setFit(key, buttons, { silent = false } = {}) {
 }
 
 
-/* Before an email is on file the launch price is masked rather than hidden:
-   the shopper can see there is a number and see it is lower, which is the
-   whole incentive. Once unlocked it rolls down instead of snapping. */
+/* The launch price is shown to everyone from the first paint. Masking it
+   behind an email hid the one number a shopper is actually here for, and made
+   them commit before they could judge whether it was worth committing to. The
+   email is still required to buy at that price — the ticket says so, and the
+   gate collects it on Add to bag. */
 function paintPrice() {
   const fit = FITS[root.dataset.fit];
   if (!fit) return;
-  const unlocked = root.dataset.unlocked === 'true';
 
   document.querySelectorAll('[data-odometer]').forEach((el) => {
-    /* Masked, not hidden: the shopper can see there is a lower number and
-       that it has the shape of a price. Same character count as the real
-       figure, so nothing shifts when it resolves. */
-    if (!unlocked) { el.textContent = '$--.--'; return; }
-
-    const from = parseFloat(String(el.textContent).replace(/[^0-9.]/g, ''));
-    if (!Number.isFinite(from)) {
-      /* Coming straight off the mask, roll down from the list price so the
-         discount is something the eye watches happen. */
-      el.textContent = money(fit.was);
-      if (reduced) { el.textContent = money(fit.price); return; }
-    }
     countTo(el, fit.price, { decimals: 2, prefix: '$', duration: 0.75 });
   });
 }

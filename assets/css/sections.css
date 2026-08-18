@@ -184,18 +184,26 @@
 
 /* ══ 02 · Colourways — the one grid on the page ═══════════════════════════ */
 
+/* Three equal tracks that always add up to the row — no auto-fit, because
+   auto-fit sized tracks independently of the frames inside them and the two
+   disagreed. Each card is bounded by its own track and can never reach its
+   neighbour. */
 .cw {
+  --frame: 300px;
   display: grid;
   gap: var(--gap-block);
-  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-  justify-items: center;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
 }
 
 .cw__item {
   display: grid;
   justify-items: center;
-  gap: 10px;
-  padding: 12px 12px 20px;
+  gap: 8px;
+  min-width: 0;              /* a grid item defaults to min-content: without
+                                this the widest card pushes the row wider than
+                                the page and the cards overlap again */
+  padding: 10px 10px 16px;
   background: none;
   border: 1px solid transparent;
   border-radius: var(--r-frame);
@@ -203,8 +211,23 @@
   transition: border-color var(--t-fast) var(--ease-glide),
               transform    var(--t-base) var(--ease-out);
 }
-.cw__item:hover { transform: translateY(-4px); }
+.cw__item:hover { transform: translateY(-3px); }
 .cw__item[aria-checked='true'] { border-color: var(--tone); }
+
+/* Stack only when the screen is genuinely narrow *and* upright. Turn a phone
+   sideways and the three go back to a row — there is width for it, and a
+   colour comparison is the one thing on this page that wants to be seen side
+   by side. */
+@media (max-width: 700px) and (orientation: portrait) {
+  .cw { grid-template-columns: 1fr; }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  /* Sideways on a phone: keep the row, shrink the frames to fit the short
+     axis rather than letting them run off the bottom. */
+  .cw { --frame: min(200px, 26vw); }
+  .cw__name { font-size: var(--fs-body); }
+}
 
 .cw__name { color: var(--ink); font-size: var(--fs-h3); }
 .cw__code { color: var(--ink-3); }

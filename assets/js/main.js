@@ -158,13 +158,25 @@ function intro() {
   let seen = false;
   try { seen = sessionStorage.getItem('nc-intro') === '1'; } catch (e) { /* private mode */ }
 
+  let finished = false;
   const done = () => {
+    if (finished) return;
+    finished = true;
     el.classList.add('is-done');
-    setTimeout(() => el.remove(), 460);
+    /* Outlast the 720ms shutter transition before pulling it from the DOM. */
+    setTimeout(() => el.remove(), 780);
     try { sessionStorage.setItem('nc-intro', '1'); } catch (e) { /* private mode */ }
   };
 
   if (seen || reduced) { el.remove(); return; }
-  setTimeout(done, 1150);
-  el.addEventListener('click', done);   // impatience is a legitimate input
+
+  /* 1250ms: the bar finishes at 1020 and the eye needs a beat on a completed
+     state, otherwise the loader reads as having been interrupted. The shutters
+     then take 720ms to part, so the plate is fully gone by ~2s. */
+  const timer = setTimeout(done, 1250);
+  el.addEventListener('click', () => { clearTimeout(timer); done(); });
+
+  /* A tab restored from the back/forward cache re-runs none of this, and a
+     loader frozen over the page is worse than no loader. */
+  window.addEventListener('pageshow', (e) => { if (e.persisted) { clearTimeout(timer); done(); } });
 }

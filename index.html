@@ -67,8 +67,22 @@
 
 <div class="cursor" data-cursor aria-hidden="true"></div>
 
+<!-- First-visit loader. Charges like the product does: the mark lights, the
+     wordmark rises, a hairline fills, then the plate splits and the page is
+     behind it. Once per session, skippable by clicking, absent entirely under
+     reduced motion. -->
 <div class="intro" data-intro aria-hidden="true">
-  <span class="intro__mark">NovaCase</span>
+  <div class="intro__stage">
+    <svg class="intro__mark" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2 L13.8 9.4 L21.2 12 L13.8 14.6 L12 22 L10.2 14.6 L2.8 12 L10.2 9.4 Z"/>
+    </svg>
+    <p class="intro__word" aria-hidden="true">
+      <span>N</span><span>o</span><span>v</span><span>a</span><span>C</span><span>a</span><span>s</span><span>e</span>
+    </p>
+    <span class="intro__bar" aria-hidden="true"><i></i></span>
+  </div>
+  <span class="intro__shutter intro__shutter--t" aria-hidden="true"></span>
+  <span class="intro__shutter intro__shutter--b" aria-hidden="true"></span>
 </div>
 
 
@@ -294,6 +308,8 @@
         <svg viewBox="0 0 420 240" data-curve role="img" aria-label="Glow brightness over six hours: a steep first hour, then a long taper.">
           <line class="cv__axis" x1="34" y1="206" x2="404" y2="206"/>
           <line class="cv__axis" x1="34" y1="18"  x2="34"  y2="206"/>
+          <path class="cv__area" data-curve-area
+                d="M34 34 C 96 96, 128 140, 172 160 S 268 188, 404 198 L404 206 L34 206 Z"/>
           <path class="cv__line" data-curve-path
                 d="M34 34 C 96 96, 128 140, 172 160 S 268 188, 404 198"/>
           <circle class="cv__head" data-curve-head cx="34" cy="34" r="4.5"/>
@@ -316,7 +332,7 @@
         <p class="eyebrow"><span class="num">05</span> the fit</p>
         <h2 class="h2">Four shells, one <em class="accent-word">shape</em>.</h2>
 
-        <div class="fits" role="radiogroup" aria-label="AirPods model">
+        <div class="fits" role="radiogroup" aria-label="AirPods model" data-stagger>
           <button class="fits__item" type="button" role="radio" aria-checked="true"
                   data-fit-btn="pods12" data-price="15.99" data-was="25.99"
                   data-name="AirPods 1 &amp; 2" data-dims="53 × 46 × 25 mm" data-weight="28 g">
@@ -344,7 +360,7 @@
         </div>
       </div>
 
-      <aside class="ticket">
+      <aside class="ticket" data-reveal>
         <p class="label ticket__head">Your build</p>
         <p class="ticket__line"><span data-ticket-colour>Midnight Blue</span> · <span data-ticket-fit>AirPods 1 &amp; 2</span></p>
 

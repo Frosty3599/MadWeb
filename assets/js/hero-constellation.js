@@ -14,6 +14,16 @@ import { reduced } from './motion.js';
 const CONVERGE_MS = 1800;
 const SRC = 'assets/images/hero-case.webp';
 
+/* The feel of the field, in four numbers. Tuned together — raising PUSH
+   without raising DAMP throws points off screen and they never come back.
+   SPRING 0.010 gives a return of a little under a second, slow enough that you
+   can see the field breathe back into shape. */
+const SPRING = 0.015;   /* pull toward home — recovers in a little over half a second */
+const DAMP = 0.90;      /* velocity retained per frame */
+const PUSH = 1.0;       /* cursor repulsion at the centre of its radius */
+const RADIUS = 108;     /* px of influence */
+const RADIUS2 = RADIUS * RADIUS;
+
 export function mount({ onFallback }) {
   const canvas = document.querySelector('[data-hero-canvas]');
   const stage = document.querySelector('[data-hero-stage]');
@@ -131,24 +141,36 @@ function run(canvas, ctx, stage, sampled) {
     nx: p.nx,
     ny: p.ny,
     kind: p.kind,
-    x: 0, y: 0,
-    sx: 0, sy: 0,
+    hx: 0, hy: 0,      /* home — where this point belongs in the silhouette */
+    x: 0, y: 0,        /* actual position, which physics moves */
+    vx: 0, vy: 0,      /* velocity, which is what makes it feel like matter */
+    sx: 0, sy: 0,      /* where it starts, before it converges */
     phase: Math.random() * Math.PI * 2,
     /* Outline points barely drift — the silhouette has to hold still enough to
        stay readable. Haze is free to wander. */
     drift: p.kind === 2 ? 0.22 + Math.random() * 0.3
          : p.kind === 1 ? 0.4 + Math.random() * 0.5
          : 0.7 + Math.random() * 1.1,
+    /* Lighter points get flung further by the same push, which is what stops
+       the field moving as one sheet. */
+    mass: p.kind === 2 ? 1.35 : p.kind === 1 ? 1 : 0.72,
     /* A fifth of the field carries the colourway instead of the fixed cyan,
        so switching colourway visibly reaches the hero. */
     toned: Math.random() < 0.2,
-    r: p.kind === 2 ? 0.9 + Math.random() * 0.5 : 0.55 + Math.random() * 0.45,
+    r: p.kind === 2 ? 1.5 + Math.random() * 0.7 : 1.05 + Math.random() * 0.6,
+    rot: Math.random() * Math.PI * 2,
+    spin: (Math.random() - 0.5) * 0.006,
   }));
   const ratio = sampled.ratio || 1;
   const ALPHA = [0.32, 0.6, 0.95];   // haze, detail, outline
 
+  /* Reused every frame rather than reallocated — 60 allocations a second of a
+     2,600-element array is a garbage collector pause you can see. */
+  const accentPath = [];
+  const tonePath = [];
+
   let dpr = 1, w = 0, h = 0, box = null;
-  const pointer = { x: -9999, y: -9999 };
+  const pointer = { x: -9999, y: -9999, px: -9999, py: -9999, vx: 0, vy: 0, live: false };
   let started = 0;
   let raf = 0;
   let visible = true;
@@ -172,8 +194,8 @@ function run(canvas, ctx, stage, sampled) {
     box = { x: (w - bw) / 2, y: (h - bh) / 2, w: bw, h: bh };
 
     pts.forEach((p) => {
-      p.x = box.x + p.nx * box.w;
-      p.y = box.y + p.ny * box.h;
+      p.hx = box.x + p.nx * box.w;
+      p.hy = box.y + p.ny * box.h;
       if (!p.sx) {
         /* Scatter origin: anywhere in the stage, biased outward so the
            convergence reads as a gathering rather than a settle. */
@@ -181,6 +203,8 @@ function run(canvas, ctx, stage, sampled) {
         const d = 0.55 + Math.random() * 0.75;
         p.sx = w / 2 + Math.cos(a) * w * d;
         p.sy = h / 2 + Math.sin(a) * h * d;
+        p.x = p.sx;
+        p.y = p.sy;
       }
     });
   }
@@ -207,42 +231,108 @@ function run(canvas, ctx, stage, sampled) {
 
     ctx.clearRect(0, 0, w, h);
 
+    /* The pointer's own velocity, decayed. A slow hover parts the field; a
+       fast swipe throws it, and the difference is the whole reason this reads
+       as a substance rather than a hover state. */
+    pointer.vx *= 0.86;
+    pointer.vy *= 0.86;
+
+    /* Two paths, two fills — batching by colour keeps 2,600 triangles at one
+       draw call each instead of 2,600, which is what makes per-particle
+       physics affordable at all. */
+    accentPath.length = 0;
+    tonePath.length = 0;
+
     for (let i = 0; i < pts.length; i++) {
       const p = pts[i];
 
-      let hx = p.x;
-      let hy = p.y;
+      /* Home drifts; the particle chases home. Separating the two is what lets
+         a point be pushed off its mark and still know where to return. */
+      const hx = p.hx + Math.sin(now / 1400 + p.phase) * p.drift;
+      const hy = p.hy + Math.cos(now / 1700 + p.phase) * p.drift
+               - (dispersal > 0 ? dispersal * (60 + p.drift * 90) : 0);
 
       if (conv < 1) {
-        hx = p.sx + (p.x - p.sx) * conv;
-        hy = p.sy + (p.y - p.sy) * conv;
+        /* During the gather, position is dictated rather than simulated —
+           physics here would fight the choreography. */
+        p.x = p.sx + (hx - p.sx) * conv;
+        p.y = p.sy + (hy - p.sy) * conv;
       } else {
-        const wob = Math.sin(now / 1400 + p.phase) * p.drift;
-        hx += wob;
-        hy += Math.cos(now / 1700 + p.phase) * p.drift;
+        /* Spring back toward home. Soft enough that the field takes a moment
+           to reassemble — an instant snap looks like a CSS transition, not
+           like something with weight. */
+        let ax = (hx - p.x) * SPRING;
+        let ay = (hy - p.y) * SPRING;
+
+        if (pointer.live) {
+          const dx = p.x - pointer.x;
+          const dy = p.y - pointer.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < RADIUS2 && d2 > 0.001) {
+            const d = Math.sqrt(d2);
+            /* Squared falloff: a firm core that fades to nothing at the rim,
+               so there is no visible circle edge sweeping the field. */
+            const falloff = 1 - d2 / RADIUS2;
+            const push = (PUSH * falloff * falloff) / p.mass;
+            ax += (dx / d) * push;
+            ay += (dy / d) * push;
+            /* Drag from the cursor's own motion — the field is carried along
+               the direction of travel, not only shoved outward from a point. */
+            ax += pointer.vx * falloff * 0.13 / p.mass;
+            ay += pointer.vy * falloff * 0.13 / p.mass;
+          }
+        }
+
+        p.vx = (p.vx + ax) * DAMP;
+        p.vy = (p.vy + ay) * DAMP;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        /* Glyphs turn with their own travel, so a disturbed field visibly
+           tumbles instead of sliding. */
+        p.rot += p.spin + (p.vx + p.vy) * 0.012;
       }
 
-      /* Cursor repulsion — a soft push, not a physics simulation. */
-      const dx = hx - pointer.x;
-      const dy = hy - pointer.y;
-      const d2 = dx * dx + dy * dy;
-      if (d2 < 12000) {
-        const f = (12000 - d2) / 12000;
-        hx += dx * f * 0.35;
-        hy += dy * f * 0.35;
-      }
-
-      if (dispersal > 0) {
-        hy -= dispersal * (60 + p.drift * 90);
-      }
-
-      ctx.globalAlpha = (conv * (1 - dispersal)) * ALPHA[p.kind];
-      ctx.fillStyle = p.toned ? palette.tone : palette.accent;
-      ctx.beginPath();
-      ctx.arc(hx, hy, p.r, 0, Math.PI * 2);
-      ctx.fill();
+      (p.toned ? tonePath : accentPath).push(p);
     }
+
+    const alphaScale = conv * (1 - dispersal);
+    paint(accentPath, palette.accent, alphaScale);
+    paint(tonePath, palette.tone, alphaScale);
     ctx.globalAlpha = 1;
+  }
+
+  /* Dala's field is built from small outlined triangles rather than dots.
+     Filled here rather than stroked: at this size a 1px outline on a 3px glyph
+     is mostly gap, and the shape stops reading as a triangle at all. */
+  function paint(list, colour, alphaScale) {
+    if (!list.length) return;
+    ctx.fillStyle = colour;
+
+    /* Grouped by kind so each opacity tier is still one path, not one per
+       particle. */
+    for (let kind = 0; kind < 3; kind++) {
+      let opened = false;
+      for (let i = 0; i < list.length; i++) {
+        const p = list[i];
+        if (p.kind !== kind) continue;
+        if (!opened) { ctx.beginPath(); opened = true; }
+
+        const r = p.r * 1.9;
+        const a = p.rot;
+        const c1 = Math.cos(a), s1 = Math.sin(a);
+        const c2 = Math.cos(a + 2.0944), s2 = Math.sin(a + 2.0944);
+        const c3 = Math.cos(a + 4.1888), s3 = Math.sin(a + 4.1888);
+
+        ctx.moveTo(p.x + c1 * r, p.y + s1 * r);
+        ctx.lineTo(p.x + c2 * r, p.y + s2 * r);
+        ctx.lineTo(p.x + c3 * r, p.y + s3 * r);
+      }
+      if (opened) {
+        ctx.globalAlpha = alphaScale * ALPHA[kind];
+        ctx.fill();
+      }
+    }
   }
 
   resize();
@@ -255,10 +345,25 @@ function run(canvas, ctx, stage, sampled) {
   if (!coarse) {
     window.addEventListener('pointermove', (e) => {
       const rect = canvas.getBoundingClientRect();
-      pointer.x = e.clientX - rect.left;
-      pointer.y = e.clientY - rect.top;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (pointer.live) {
+        /* Clamped: a pointer jumping in from off-screen reports an enormous
+           delta on its first frame and would fire the whole field at once. */
+        pointer.vx = Math.max(-40, Math.min(40, x - pointer.px));
+        pointer.vy = Math.max(-40, Math.min(40, y - pointer.py));
+      }
+      pointer.px = x;
+      pointer.py = y;
+      pointer.x = x;
+      pointer.y = y;
+      pointer.live = true;
     }, { passive: true });
-    window.addEventListener('pointerleave', () => { pointer.x = pointer.y = -9999; });
+
+    /* Leaving releases the field rather than teleporting the influence point
+       to a corner and dragging everything with it. */
+    window.addEventListener('pointerleave', () => { pointer.live = false; pointer.vx = pointer.vy = 0; });
   }
 
   /* Scrolling past the hero lifts the field away rather than letting it sit

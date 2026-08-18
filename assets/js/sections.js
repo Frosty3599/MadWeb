@@ -22,6 +22,7 @@ export function mount() {
   glow();
   build();
   science();
+  fit();
   spec();
   faq();
 
@@ -110,12 +111,35 @@ function science() {
 
   countersIn(el);
 
+  const area = el.querySelector('[data-curve-area]');
   const len = path.getTotalLength();
   path.style.strokeDasharray = String(len);
+
+  /* The filled area is revealed by a clip rectangle that tracks the drawn
+     length, so volume and stroke advance together instead of the fill sitting
+     under a line that has not got there yet. */
+  const svg = path.ownerSVGElement;
+  let clipRect = null;
+  if (area && svg) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const defs = document.createElementNS(ns, 'defs');
+    const clip = document.createElementNS(ns, 'clipPath');
+    clip.setAttribute('id', 'nc-curve-clip');
+    clipRect = document.createElementNS(ns, 'rect');
+    clipRect.setAttribute('x', '0');
+    clipRect.setAttribute('y', '0');
+    clipRect.setAttribute('height', '240');
+    clipRect.setAttribute('width', '0');
+    clip.appendChild(clipRect);
+    defs.appendChild(clip);
+    svg.insertBefore(defs, svg.firstChild);
+    area.setAttribute('clip-path', 'url(#nc-curve-clip)');
+  }
 
   scrub(el, (tl) => {
     if (!tl || !gsap) {
       path.style.strokeDashoffset = '0';
+      if (clipRect) clipRect.setAttribute('width', '420');
       if (hours) hours.textContent = '0.0';
       if (head) {
         const end = path.getPointAtLength(len);
@@ -135,10 +159,35 @@ function science() {
         path.style.strokeDashoffset = String(len * (1 - state.p));
         const pt = path.getPointAtLength(len * state.p);
         if (head) { head.setAttribute('cx', pt.x.toFixed(1)); head.setAttribute('cy', pt.y.toFixed(1)); }
+        if (clipRect) clipRect.setAttribute('width', pt.x.toFixed(1));
         if (hours) hours.textContent = (6 - state.p * 6).toFixed(1);
       },
     }, 0);
   }, { end: '+=150%' });
+}
+
+
+/* 05 — the four fits arrive in sequence, then the ticket. Staggered by an
+   inline custom property rather than nth-child rules, so adding or removing a
+   fit needs no CSS change. */
+function fit() {
+  const group = document.querySelector('.fits[data-stagger]');
+  if (!group) return;
+
+  const items = [...group.children];
+  items.forEach((el, i) => {
+    el.setAttribute('data-stagger-item', '');
+    el.style.setProperty('--d', `${i * 70}ms`);
+  });
+
+  if (reduced) { group.classList.add('is-in'); return; }
+
+  const io = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    group.classList.add('is-in');
+    io.disconnect();
+  }, { threshold: 0.25 });
+  io.observe(group);
 }
 
 
@@ -167,9 +216,71 @@ function faq() {
   if (!list) return;
 
   const items = [...list.querySelectorAll('details')];
-  items.forEach((d) => d.addEventListener('toggle', () => {
-    if (d.open) items.forEach((o) => { if (o !== d) o.open = false; });
-  }));
+
+  items.forEach((d) => {
+    /* Everything after the summary goes in a wrapper we can measure. <details>
+       itself cannot be animated — it snaps. */
+    const body = document.createElement('div');
+    body.className = 'qa__body';
+    [...d.childNodes].filter((n) => n.nodeName !== 'SUMMARY').forEach((n) => body.appendChild(n));
+    d.appendChild(body);
+    if (!d.open) body.style.height = '0px';
+
+    const summary = d.querySelector('summary');
+    if (!summary) return;
+
+    summary.addEventListener('click', (e) => {
+      if (reduced) return;          /* let the native toggle happen instantly */
+      e.preventDefault();           /* we drive open and closed ourselves */
+      if (d.dataset.busy) return;
+      toggle(d, body, !d.open, items);
+    });
+  });
+}
+
+/* The browser hides a closed <details>'s content the instant `open` flips to
+   false, so a height transition started at the same moment plays to an
+   invisible box — the answer appears to snap shut however carefully it is
+   animated. Closing therefore keeps `open` true for the length of the
+   animation and only flips it at the end. */
+function toggle(d, body, opening, items) {
+  d.dataset.busy = '1';
+
+  if (opening) {
+    items.forEach((o) => {
+      if (o !== d && o.open) toggle(o, o.querySelector('.qa__body'), false, items);
+    });
+    d.open = true;
+  }
+
+  const from = body.getBoundingClientRect().height;
+  body.style.height = 'auto';
+  const to = opening ? body.getBoundingClientRect().height : 0;
+
+  body.style.height = `${from}px`;
+  body.setAttribute('data-animating', '');
+  void body.offsetHeight;          /* one forced reflow, so there is a start value */
+  body.style.height = `${to}px`;
+
+  const end = (e) => {
+    if (e && e.target !== body) return;
+    body.removeEventListener('transitionend', end);
+    clearTimeout(fallback);
+    body.removeAttribute('data-animating');
+    if (opening) {
+      /* Never leave it at a fixed pixel height — the answer would clip if the
+         window narrowed and the text rewrapped. */
+      body.style.height = 'auto';
+    } else {
+      d.open = false;
+      body.style.height = '0px';
+    }
+    delete d.dataset.busy;
+  };
+
+  body.addEventListener('transitionend', end);
+  /* transitionend does not fire when the height does not actually change. */
+  const fallback = setTimeout(end, 700);
 }
 
 

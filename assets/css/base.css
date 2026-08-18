@@ -81,9 +81,15 @@ h1, h2, h3 {
   line-height: 1.05;
 }
 
+/* Weight 500, not the 400 everything else runs at. The reference world builds
+   hierarchy from scale alone, and at 5rem that left the hero reading slightly
+   thin against the density of the constellation beside it — a half-step of
+   weight, with the tracking opened a hair to stop the counters closing up,
+   gives it presence without turning it into a poster shout. */
 .display {
   font-size: var(--fs-display);
-  letter-spacing: var(--tracking-display);
+  font-weight: 500;
+  letter-spacing: -0.038em;
 }
 
 .h2 {
@@ -105,6 +111,9 @@ h1, h2, h3 {
 .accent-word {
   font-family: var(--serif);
   font-style: italic;
+  /* Held at 400 while the sans goes to 500: the serif exists in one weight
+     only, so anything heavier is a synthesised fake that thickens the stems
+     unevenly and pulls the two faces out of balance. */
   font-weight: 400;
   font-size: 1.06em;
   letter-spacing: -0.01em;

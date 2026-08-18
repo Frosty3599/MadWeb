@@ -62,19 +62,101 @@
   z-index: 70;
   display: grid;
   place-items: center;
+  background: transparent;   /* the shutters are the black, so they can part */
+  cursor: pointer;
+}
+
+/* Two halves that meet in the middle and then draw back, so the page is
+   revealed rather than faded to. */
+.intro__shutter {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 50.5vh;            /* the half-pixel overlap stops a hairline seam */
   background: var(--void);
+  z-index: -1;
+  transition: transform 720ms var(--ease-out);
 }
+.intro__shutter--t { top: 0; }
+.intro__shutter--b { bottom: 0; }
+
+.intro__stage {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  transition: opacity 260ms var(--ease-soft);
+}
+
 .intro__mark {
-  font-size: var(--fs-h3);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-.intro.is-done {
+  width: 34px;
+  height: 34px;
+  fill: var(--accent);
   opacity: 0;
-  pointer-events: none;
-  transition: opacity 420ms var(--ease-out);
+  transform: scale(0.4) rotate(-35deg);
+  animation: intro-mark 620ms var(--ease-out) 60ms forwards;
+  filter: drop-shadow(0 0 14px var(--glow));
 }
+@keyframes intro-mark {
+  to { opacity: 1; transform: none; }
+}
+
+/* Letter by letter, the same masked rise the headlines use — the loader is
+   made of the page's own vocabulary rather than a spinner borrowed from
+   somewhere else. */
+.intro__word {
+  margin: 0;
+  display: flex;
+  gap: 0.04em;
+  font-size: var(--fs-h3);
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;       /* balances the trailing letter-space */
+  text-transform: uppercase;
+  color: var(--ink);
+  overflow: hidden;
+}
+.intro__word span {
+  display: inline-block;
+  transform: translateY(115%);
+  animation: intro-letter 540ms var(--ease-out) forwards;
+}
+.intro__word span:nth-child(1) { animation-delay: 180ms; }
+.intro__word span:nth-child(2) { animation-delay: 224ms; }
+.intro__word span:nth-child(3) { animation-delay: 268ms; }
+.intro__word span:nth-child(4) { animation-delay: 312ms; }
+.intro__word span:nth-child(5) { animation-delay: 356ms; }
+.intro__word span:nth-child(6) { animation-delay: 400ms; }
+.intro__word span:nth-child(7) { animation-delay: 444ms; }
+.intro__word span:nth-child(8) { animation-delay: 488ms; }
+@keyframes intro-letter {
+  to { transform: none; }
+}
+
+.intro__bar {
+  display: block;
+  width: 132px;
+  height: 1px;
+  background: var(--hairline);
+  overflow: hidden;
+}
+.intro__bar i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  animation: intro-bar 900ms var(--ease-soft) 120ms forwards;
+}
+@keyframes intro-bar {
+  to { transform: scaleX(1); }
+}
+
+/* The mark and wordmark clear first, then the shutters part — if they leave
+   together the eye follows the type up and misses the page arriving. */
+.intro.is-done { pointer-events: none; }
+.intro.is-done .intro__stage { opacity: 0; }
+.intro.is-done .intro__shutter--t { transform: translateY(-100%); }
+.intro.is-done .intro__shutter--b { transform: translateY(100%); }
 
 .toast {
   position: fixed;
@@ -169,14 +251,23 @@
   gap: var(--gap-block);
   align-items: center;
 }
-.glow__copy { display: grid; gap: 14px; justify-items: start; }
-.glow__lede { max-width: 32ch; }
+.glow__copy { display: grid; gap: 12px; justify-items: start; }
+.glow__lede { max-width: 30ch; }
 .glow__lamp { align-self: start; }
-.glow__frame { --frame: 260px; }   /* deliberately small — the section is a band */
+/* Capped against the viewport as well as in pixels. The bloom behind a frame
+   sits 6% outside it, so a 380px frame on a 390px phone pushed a pixel of
+   horizontal scroll onto the page. */
+.glow__frame { --frame: min(380px, 78vw); }
 
 @media (min-width: 760px) {
+  /* Both columns sized to their content and packed to the left, rather than a
+     1fr text column shoving the shot against the right margin. The case now
+     sits beside the sentence it belongs to — at this size the two read as one
+     object, which is the whole point of a section about looking at it. */
   .glow__inner {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 34ch) auto;
+    justify-content: start;
+    column-gap: clamp(20px, 4vw, 56px);
     min-height: 40vh;
   }
 }
@@ -273,9 +364,25 @@
 /* Leader lines. Without them the labels float free of the layers once the
    drawing separates, and the reader has to guess which name belongs to which
    band — which defeats the point of drawing it at all. */
-.xsection line { stroke: var(--hairline); stroke-width: 1; opacity: 0; }
-.xsection .xs__layer.is-labelled text,
-.xsection .xs__layer.is-labelled line { opacity: 1; transition: opacity var(--t-base) var(--ease-out); }
+/* Leaders draw outward from the band toward their label instead of blinking
+   on — the eye follows the line to the word, which is the job the line is
+   there to do. */
+.xsection line {
+  stroke: var(--hairline);
+  stroke-width: 1;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  opacity: 0;
+}
+.xsection .xs__layer.is-labelled line {
+  opacity: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--t-base) var(--ease-out), opacity var(--t-fast) linear;
+}
+.xsection .xs__layer.is-labelled text {
+  opacity: 1;
+  transition: opacity var(--t-base) var(--ease-out) 160ms;
+}
 
 @media (min-width: 900px) {
   .build__grid { grid-template-columns: 1fr 0.85fr; gap: 48px; }
@@ -307,8 +414,12 @@
 .science__chart { margin: 0; position: relative; }
 .science__chart svg { width: 100%; height: auto; }
 .cv__axis { stroke: var(--hairline); stroke-width: 1; }
+/* The charge as a quantity, not just a line. Clipped to the drawn length by
+   the same scrub that draws the stroke, so the volume fills as the curve
+   advances rather than appearing under a line that has not arrived yet. */
+.cv__area { fill: var(--accent); opacity: 0.10; }
 .cv__line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; }
-.cv__head { fill: var(--accent); }
+.cv__head { fill: var(--accent); filter: drop-shadow(0 0 6px var(--accent)); }
 .cv__tick {
   font-family: var(--mono);
   font-size: 10px;
@@ -397,6 +508,29 @@
   stroke-linecap: round;
   transition: stroke var(--t-base) var(--ease-soft);
 }
+/* Each icon is drawn rather than faded in. 90 comfortably exceeds the longest
+   path in the set, so one value covers all four without measuring each. */
+.feature__icon * {
+  stroke-dasharray: 90;
+  stroke-dashoffset: 90;
+}
+.feature.is-in .feature__icon * {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 900ms var(--ease-out);
+}
+
+/* Fit rows arrive in sequence. The delay is set per row by the stagger helper
+   so the markup stays free of position-dependent classes. */
+.fits [data-stagger-item] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.fits.is-in [data-stagger-item] {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--t-base) var(--ease-out) var(--d, 0ms),
+              transform var(--t-base) var(--ease-out) var(--d, 0ms);
+}
 .feature b { color: var(--ink); font-weight: 400; }
 .feature span { font-size: var(--fs-small); color: var(--ink-3); }
 
@@ -473,6 +607,13 @@
 }
 .qa[open] summary::after { rotate: 45deg; }
 .qa p { padding-bottom: 18px; max-width: 62ch; font-size: var(--fs-small); }
+
+/* <details> snaps open by default, which on a five-item stack reads as the
+   page glitching. The wrapper is measured and animated instead. */
+.qa__body { overflow: hidden; }
+.qa__body[data-animating] { transition: height var(--t-base) var(--ease-out); }
+.qa summary { transition: color var(--t-fast) var(--ease-glide); }
+.qa[open] summary { color: var(--tone); }
 
 @media (min-width: 900px) {
   .faq__grid { grid-template-columns: 0.7fr 1fr; gap: 48px; }

@@ -297,19 +297,23 @@ a { color: inherit; }
    heading has to start below the bar rather than merely scroll past it. Both
    scrubbed sections also take a full viewport, because a short pinned section
    leaves a lake of empty black under its content while the timeline plays. */
+/* Inside the shell and the charge, back to how they were: a full viewport with
+   their content centred in it.
+
+   Top-aligning them did close the gap above each heading, but it spent the
+   whole of the leftover height below the content instead, and a diagram
+   stranded against the top of the screen with a third of a viewport of black
+   under it reads worse than the gap it removed. Centred, the pin has the
+   symmetry it wants. The cost is real and deliberate: roughly half a viewport
+   of the space above these two headings comes back. */
 .section[data-scrub] {
-  /* A pinned section has to fill the screen, or its timeline plays against a
-     strip of whatever comes next. But centring the content inside that height
-     put half the leftover space *above* the heading — which is what the gap
-     between these sections was actually made of, and no amount of trimming
-     padding would have touched it. Content starts at the top instead; the
-     remaining space falls below it, inside the pinned frame, where it reads as
-     the section's own breathing room rather than a gap between two sections. */
-  min-height: 84svh;
+  min-height: 100svh;
   display: grid;
-  align-content: start;
-  /* Just enough to clear the floating bar, whose lower edge sits at ~70px. */
-  padding-top: calc(var(--nav-h) - 10px);
+  align-content: center;
+  padding-top: calc(var(--gap-section) + var(--nav-h));
+  /* Bottom padding stays tight. With the content centred in a full viewport
+     this is invisible — the centring decides where things sit — but it keeps
+     the charge-to-fit boundary at the 16px it was asked to be. */
   padding-bottom: var(--gap-tight);
 }
 

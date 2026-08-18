@@ -1,0 +1,130 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   NovaCase — tokens
+
+   Every value the rest of the stylesheet is allowed to use lives here. If a
+   colour, duration or radius appears anywhere else as a literal, it is a bug.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Surface ──────────────────────────────────────────────────────────────
+     Black is the design, not a dark theme. There is exactly one surface
+     colour: sections never sit on panels, cards or tinted bands. */
+  --void:        #000000;
+  --ink:         #ffffff;   /* headlines only */
+  --ink-2:       #bdbdbd;   /* body copy */
+  --ink-3:       #9a9a9a;   /* labels, inactive nav, captions */
+  --hairline:    rgba(255, 255, 255, 0.14);
+  --hairline-2:  rgba(255, 255, 255, 0.07);
+
+  /* ── Accent ───────────────────────────────────────────────────────────────
+     Cyan is fixed because it is literally the product — the case glows this
+     colour. --tone follows the selected colourway and is the only chromatic
+     value on the page that moves. */
+  --accent:      #4fe8ff;
+  --accent-ink:  #04141a;   /* text on an accent fill */
+  --amber:       #ffb829;   /* the launch-price chip, and nothing else */
+  --tone:        #4fcdf2;   /* overridden per colourway below */
+  --glow:        rgba(79, 232, 255, 0.30);
+
+  /* ── Type ─────────────────────────────────────────────────────────────────
+     Display sits at weight 400 and body at 200. Hierarchy comes from scale;
+     nothing on this page is bold. */
+  --sans:   'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono:   'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --serif:  'Instrument Serif', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+
+  /* Capped at 5rem, not 6: at 6rem "Glows all night." breaks to three lines
+     in the hero column, and a three-line poster headline is just a paragraph
+     in a big font. */
+  --fs-display: clamp(2.6rem, 6.4vw, 5rem);
+  --fs-h2:      clamp(2.1rem, 5.4vw, 4rem);
+  --fs-h3:      clamp(1.1rem, 1.6vw, 1.4rem);
+  --fs-lede:    clamp(1.05rem, 1.4vw, 1.25rem);
+  --fs-body:    1.0625rem;
+  --fs-small:   0.9375rem;
+  --fs-label:   0.75rem;
+  --fs-eyebrow: 1.25rem;    /* the italic serif kicker */
+
+  --tracking-display: -0.04em;
+  --tracking-h2:      -0.035em;
+  --tracking-label:    0.09em;
+
+  /* ── Spacing ──────────────────────────────────────────────────────────────
+     Minimal and uniform. 64px between sections everywhere, 40px below 768px —
+     no section gets a special gap, which is what makes the rhythm read as
+     deliberate rather than arbitrary. */
+  --gap-section: 64px;
+  --gap-block:   24px;
+  --gap-item:    12px;
+  --gutter:      clamp(1.25rem, 4vw, 3rem);
+  --page:        1280px;
+
+  /* Every photograph on the page sits in a frame this size. The five source
+     files have five different shapes; the shared frame is what lines them up. */
+  --frame: 420px;
+
+  /* The nav floats over everything, so anything that must not sit under it
+     clears this. */
+  --nav-h: 84px;
+
+  /* ── Shape ────────────────────────────────────────────────────────────────
+     Two radii, no more. Frames and panels at 24, pills fully round. */
+  --r-frame: 24px;
+  --r-pill:  9999px;
+
+  /* ── Motion ───────────────────────────────────────────────────────────────
+     A shared vocabulary, so nothing on the page moves to its own private
+     curve. Entrances decelerate (--ease-out); anything reversible uses the
+     same symmetric curve in both directions (--ease-soft). */
+  --ease-out:   cubic-bezier(0.16, 1, 0.30, 1);
+  --ease-soft:  cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-glide: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --t-fast:  180ms;   /* hover, focus, chip states */
+  --t-base:  520ms;   /* reveals, drawer, panels */
+  --t-slow:  900ms;   /* the theme flip and the glow crossfade */
+
+  --grain: 0.05;
+}
+
+/* ── Colourways ─────────────────────────────────────────────────────────────
+   Selecting a colourway moves --tone and the ambient glow, and nothing else.
+   The cyan accent stays put so the brand does not change identity three times
+   on one page. */
+:root[data-colour="forest-green"]  { --tone: #6be060; --glow: rgba(107, 224, 96, 0.26); }
+:root[data-colour="amber-red"]     { --tone: #ff6a4d; --glow: rgba(255, 106, 77, 0.26); }
+:root[data-colour="midnight-blue"] { --tone: #4fcdf2; --glow: rgba(79, 205, 242, 0.28); }
+
+/* ── Lights on ──────────────────────────────────────────────────────────────
+   The lamp switch flips the page to a warm off-white rather than merely
+   raising the exposure, so the switch reads as an event. Only the surface and
+   ink tokens move; spacing, shape and motion are theme-independent. */
+:root[data-theme="lit"] {
+  --void:       #f1f0ec;
+  --ink:        #131310;
+  --ink-2:      #45453e;
+  --ink-3:      #5f5f57;
+  --hairline:   rgba(19, 19, 16, 0.18);
+  --hairline-2: rgba(19, 19, 16, 0.09);
+
+  /* The cyan has to darken a long way on paper. #067b95 was the first pick and
+     it measured 4.31:1 against the canvas — fine as a button fill, but the
+     cursive accent word is thin-stroked text in this colour and 4.31 fails.
+     This clears 5.07 as text and 5.78 under white. */
+  --accent:     #05707f;
+  --accent-ink: #ffffff;
+  --amber:      #8a5a00;
+  --glow:       rgba(6, 123, 149, 0.12);
+  --grain:      0.028;
+}
+
+:root[data-theme="lit"][data-colour="forest-green"]  { --tone: #1c6b17; }
+:root[data-theme="lit"][data-colour="amber-red"]     { --tone: #a8331c; }
+:root[data-theme="lit"][data-colour="midnight-blue"] { --tone: #10556c; }
+
+@media (max-width: 768px) {
+  :root {
+    --gap-section: 40px;
+    --gap-block:   20px;
+    --frame:       min(320px, 78vw);
+  }
+}
